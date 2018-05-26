@@ -87,6 +87,8 @@ namespace Xamarin.Forms
 					setter.Apply(visualElement);
 				}
 
+				target?.Storyboard?.Begin();
+
 				return true;
 			}
 
@@ -269,6 +271,7 @@ namespace Xamarin.Forms
 		}
 	}
 
+	[ContentProperty(nameof(Storyboard))]
 	[RuntimeNameProperty(nameof(Name))]
 	public sealed class VisualState 
 	{
@@ -276,6 +279,8 @@ namespace Xamarin.Forms
 		{
 			Setters = new ObservableCollection<Setter>();
 		}
+
+		public Storyboard Storyboard { get; set; }
 
 		public string Name { get; set; }
 		public IList<Setter> Setters { get;}
