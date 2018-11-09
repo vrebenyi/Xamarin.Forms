@@ -544,7 +544,7 @@ namespace Xamarin.Forms.Platform.iOS
 			{
 				case NotifyCollectionChangedAction.Add:
 
-					UpdateEstimatedRowHeight();
+					Device.BeginInvokeOnMainThread(UpdateEstimatedRowHeight);
 					if (e.NewStartingIndex == -1 || groupReset)
 						goto case NotifyCollectionChangedAction.Reset;
 
