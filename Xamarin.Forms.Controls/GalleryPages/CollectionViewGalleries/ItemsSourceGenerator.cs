@@ -98,6 +98,24 @@ namespace Xamarin.Forms.Controls.GalleryPages.CollectionViewGalleries
 			}
 		}
 
+		public void GenerateEmptyObservableCollectionAndAddItemsEverySecond()
+		{
+			if (int.TryParse(_entry.Text, out int count))
+			{
+				var items = new ObservableCollection<CollectionViewGalleryTestItem>();
+				_cv.ItemsSource = items;
+				Device.StartTimer(TimeSpan.FromSeconds(1), () =>
+				{
+					var n = items.Count + 1;
+					items.Add(new CollectionViewGalleryTestItem(DateTime.Now.AddDays(n),
+						$"{_images[n % _images.Length]}, {n}", _images[n % _images.Length], n));
+
+					return !(count == items.Count);
+				});
+			}
+		}
+
+
 		void GenerateItems(object sender, EventArgs e)
 		{
 			GenerateItems();

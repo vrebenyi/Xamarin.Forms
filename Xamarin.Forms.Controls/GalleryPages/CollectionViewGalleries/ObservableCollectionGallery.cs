@@ -27,7 +27,10 @@
 							new ObservableCodeCollectionViewGallery(), Navigation),
 
 						GalleryBuilder.NavButton("Add/Remove Items (grid, initially empty)", () =>
-							new ObservableCodeCollectionViewGallery(initialItems: 0), Navigation)
+							new ObservableCodeCollectionViewGallery(initialItems: 0), Navigation),
+
+						GalleryBuilder.NavButton("Add/Remove Items (list, initially empty)", () =>
+							new ObservableCodeCollectionViewGallery(grid: false, initialItems: 0), Navigation)
 					}
 				}
 			};
