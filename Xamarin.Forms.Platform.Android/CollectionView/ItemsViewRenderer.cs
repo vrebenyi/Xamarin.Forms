@@ -295,8 +295,8 @@ namespace Xamarin.Forms.Platform.Android
 
 			if (adapter != null)
 			{
-				adapter.Dispose();
 				SetAdapter(null);
+				adapter.Dispose();
 			}
 
 			if (_snapManager != null)
