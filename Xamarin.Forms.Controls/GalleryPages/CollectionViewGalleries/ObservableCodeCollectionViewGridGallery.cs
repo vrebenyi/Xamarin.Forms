@@ -3,7 +3,7 @@
 	internal class ObservableCodeCollectionViewGallery : ContentPage
 	{
 		public ObservableCodeCollectionViewGallery(ItemsLayoutOrientation orientation = ItemsLayoutOrientation.Vertical,
-			bool grid = true, bool initialItems = 1000)
+			bool grid = true, bool initialItems = 1000, bool addItemsWithTimer = false)
 		{
 			var layout = new Grid
 			{
@@ -25,7 +25,7 @@
 
 			var itemTemplate = ExampleTemplates.PhotoTemplate();
 
-			var collectionView = new CollectionView {ItemsLayout = itemsLayout, ItemTemplate = itemTemplate};
+			var collectionView = new CollectionView { ItemsLayout = itemsLayout, ItemTemplate = itemTemplate };
 
 			var generator = new ItemsSourceGenerator(collectionView, initialItems);
 
@@ -56,8 +56,10 @@
 			Grid.SetRow(collectionView, 6);
 
 			Content = layout;
-
-			generator.GenerateObservableCollection();
+			if (addItemsWithTimer)
+				generator.GenerateEmptyObservableCollectionAndAddItemsEverySecond();
+			else
+				generator.GenerateObservableCollection();
 		}
 	}
 }

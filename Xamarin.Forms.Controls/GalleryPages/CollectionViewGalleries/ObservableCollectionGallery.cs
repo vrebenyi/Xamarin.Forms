@@ -31,6 +31,9 @@
 
 						GalleryBuilder.NavButton("Add/Remove Items (list, initially empty)", () =>
 							new ObservableCodeCollectionViewGallery(grid: false, initialItems: 0), Navigation)
+
+						GalleryBuilder.NavButton("Add Items with timer to Empty Collection", () =>
+							new ObservableCodeCollectionViewGallery(grid: false, initialItems: 0, addItemsWithTimer: true), Navigation)
 					}
 				}
 			};
