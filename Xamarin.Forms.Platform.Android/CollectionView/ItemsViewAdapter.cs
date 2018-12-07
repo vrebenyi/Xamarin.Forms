@@ -1,10 +1,7 @@
 using System;
-using System.Diagnostics;
 using Android.Content;
 using Android.Support.V7.Widget;
-using Android.Views;
 using Android.Widget;
-using Java.Lang;
 using AView = Android.Views.View;
 using ViewGroup = Android.Views.ViewGroup;
 
