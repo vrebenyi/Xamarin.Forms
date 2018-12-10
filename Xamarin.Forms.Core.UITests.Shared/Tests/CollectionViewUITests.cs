@@ -9,6 +9,14 @@ namespace Xamarin.Forms.Core.UITests
 		string _enableCollectionView = "Enable CollectionView";
 		string _btnUpdate = "Update";
 		string _entryUpdate = "entryUpdate";
+		string _entryInsert = "entryInsert";
+		string _entryRemove = "entryRemove";
+		string _entryReplace = "entryReplace";
+		string _btnInsert = "btnInsert";
+		string _btnRemove = "btnRemove";
+		string _btnReplace = "btnReplace";
+		string _inserted = "Inserted";
+		string _replaced = "Replacement";
 
 		public CollectionViewUITests()
 		{
@@ -42,14 +50,27 @@ namespace Xamarin.Forms.Core.UITests
 			foreach (var gallery in subGalleries)
 			{
 				if (gallery == "FilterItems")
-				{
+					continue;
 
-				}
-				else
-				{
-					VisitSubGallery(gallery, !gallery.Contains("Horizontal"), $"Item: {firstItem}", $"Item: {lastItem}", lastItem - 1);
-					App.NavigateBack();
-				}
+				VisitSubGallery(gallery, !gallery.Contains("Horizontal"), $"Item: {firstItem}", $"Item: {lastItem}", lastItem - 1, true, false);
+				App.NavigateBack();
+			}
+		}
+
+		[TestCase("Observable Collection", new string[] { "FilterItems", "Add/RemoveItemsList", "Add/RemoveItemsGrid" }, 1, 6)]
+		public void AddRemoveItems(string collectionTestName, string[] subGalleries, int firstItem, int lastItem)
+		{
+			VisitInitialGallery(collectionTestName);
+
+			foreach (var gallery in subGalleries)
+			{
+				if (gallery == "FilterItems")
+					continue;
+
+				VisitSubGallery(gallery, !gallery.Contains("Horizontal"), $"Item: {firstItem}", $"Item: {lastItem}", lastItem - 1, false, true);
+
+				App.NavigateBack();
+
 			}
 		}
 
@@ -63,7 +84,7 @@ namespace Xamarin.Forms.Core.UITests
 			App.Tap(t => t.Marked(galeryName));
 		}
 
-		void VisitSubGallery(string galleryName, bool scrollDown, string lastItem, string firstPageItem, int updateItemsCount, bool testItemSource = true)
+		void VisitSubGallery(string galleryName, bool scrollDown, string lastItem, string firstPageItem, int updateItemsCount, bool testItemSource, bool testAddRemove)
 		{
 			App.WaitForElement(t => t.Marked(galleryName));
 			App.Tap(t => t.Marked(galleryName));
@@ -74,6 +95,31 @@ namespace Xamarin.Forms.Core.UITests
 				UITest.Queries.AppRect collectionViewFrame = TestItemsExist(scrollDown, lastItem);
 				TestUpdateItemsWorks(scrollDown, firstPageItem, updateItemsCount.ToString(), collectionViewFrame);
 			}
+
+			if (testAddRemove)
+			{
+				TestAddRemoveReplaceWorks(lastItem);
+			}
+		}
+
+		private void TestAddRemoveReplaceWorks(string lastItem)
+		{
+			App.WaitForElement(t => t.Marked(_entryRemove));
+			App.ClearText(_entryRemove);
+			App.EnterText(_entryRemove, "1");
+			App.DismissKeyboard();
+			App.Tap(_btnRemove);
+			App.WaitForNoElement(lastItem);
+			App.ClearText(_entryInsert);
+			App.EnterText(_entryInsert, "1");
+			App.DismissKeyboard();
+			App.Tap(_btnInsert);
+			App.WaitForElement(_inserted);
+			App.ClearText(_entryReplace);
+			App.EnterText(_entryReplace, "1");
+			App.DismissKeyboard();
+			App.Tap(_btnReplace);
+			App.WaitForElement(_replaced);
 		}
 
 		void TestUpdateItemsWorks(bool scrollDown, string itemMarked, string updateItemsCount, UITest.Queries.AppRect collectionViewFrame)
