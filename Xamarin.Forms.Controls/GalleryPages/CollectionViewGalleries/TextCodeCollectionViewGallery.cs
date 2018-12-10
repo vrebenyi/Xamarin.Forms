@@ -17,6 +17,7 @@
 			{
 				ItemsLayout = itemsLayout,
 				SelectionMode = SelectionMode.Single
+				AutomationId = "collectionview"
 			};
 
 			var generator = new ItemsSourceGenerator(collectionView);

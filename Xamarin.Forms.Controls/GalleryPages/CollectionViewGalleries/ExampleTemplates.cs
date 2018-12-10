@@ -165,7 +165,7 @@
 					Text = "Caption"
 				};
 
-				caption.SetBinding(Label.TextProperty, new Binding("Index", stringFormat:"Index {0}"));
+				caption.SetBinding(Label.TextProperty, new Binding("Index", stringFormat:"Item: {0}"));
 
 				templateLayout.Children.Add(image);
 				templateLayout.Children.Add(caption);
@@ -210,7 +210,7 @@
 					Text = "Caption"
 				};
 
-				caption.SetBinding(Label.TextProperty, new Binding("Date", stringFormat: "{0:d}"));
+				caption.SetBinding(Label.TextProperty, new Binding("Index", stringFormat: "Item: {0}"));
 				
 				templateLayout.Children.Add(image);
 				templateLayout.Children.Add(caption);

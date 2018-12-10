@@ -20,14 +20,15 @@
 
 						GalleryBuilder.NavButton("Filter Items", () => new FilterCollectionView(), Navigation),
 
-						GalleryBuilder.NavButton("Add/Remove Items (list)", () =>
+						GalleryBuilder.NavButton("Add/Remove Items (List)", () =>
 							new ObservableCodeCollectionViewGallery(grid: false), Navigation),
 
-						GalleryBuilder.NavButton("Add/Remove Items (grid)", () =>
-							new ObservableCodeCollectionViewGallery(), Navigation),
+						GalleryBuilder.NavButton("Add/Remove Items (Grid)", () =>
+							new ObservableCodeCollectionViewGallery(), Navigation)
 
 						GalleryBuilder.NavButton("Add/Remove Items (grid, initially empty)", () =>
 							new ObservableCodeCollectionViewGallery(initialItems: 0), Navigation)
+
 					}
 				}
 			};
