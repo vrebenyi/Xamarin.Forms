@@ -74,6 +74,24 @@ namespace Xamarin.Forms.Core.UITests
 			}
 		}
 
+		[TestCase("Observable Collection", new string[] { "FilterItems", "Add/RemoveItemsList", "Add/RemoveItemsGrid" }, 19, 6)]
+		[TestCase("Default Text", new string[] { "VerticalListCode", "HorizontalListCode", "VerticalGridCode", "HorizontalGridCode" }, 101, 11)]
+		[TestCase("DataTemplate", new string[] { "VerticalListCode", "HorizontalListCode", "VerticalGridCode", "HorizontalGridCode" }, 19, 6)]
+		public void VisitAndTestItemsPosition(string collectionTestName, string[] subGalleries, int firstItem, int lastItem)
+		{
+			VisitInitialGallery(collectionTestName);
+
+			foreach (var gallery in subGalleries)
+			{
+				if (gallery == "FilterItems")
+					continue;
+				App.WaitForElement(t => t.Marked(gallery));
+				App.Tap(t => t.Marked(gallery));
+				TesItemsPosition(gallery);
+				App.NavigateBack();
+			}
+		}
+
 		void VisitInitialGallery(string collectionTestName)
 		{
 			var galeryName = $"{collectionTestName} Galleries";
@@ -141,6 +159,47 @@ namespace Xamarin.Forms.Core.UITests
 			var collectionViewFrame = App.Query(q => q.Marked(_collectionViewId))[0].Rect;
 			App.ScrollForElement($"* marked:'{itemMarked}'", new Drag(collectionViewFrame, scrollDown ? Drag.Direction.BottomToTop : Drag.Direction.RightToLeft, Drag.DragLength.Long));
 			return collectionViewFrame;
+		}
+
+		void TesItemsPosition(string gallery)
+		{
+			var isVertical = !gallery.Contains("Horizontal");
+			var isList = !gallery.Contains("Grid");
+			App.WaitForNoElement(t => t.Marked(gallery));
+
+			var element1 = App.Query(c => c.Marked("Item: 0"))[0];
+			var element2 = App.Query(c => c.Marked("Item: 2"))[0];
+
+			if (isVertical)
+			{
+				if (isList)
+				{
+					Assert.AreEqual(element1.Rect.X, element2.Rect.X);
+					Assert.Greater(element2.Rect.Y, element1.Rect.Y);
+				}
+				else
+				{
+					var element3 = App.Query(c => c.Marked("Item: 3"))[0];
+					Assert.AreEqual(element2.Rect.Y, element1.Rect.Y);
+					Assert.Greater(element3.Rect.Y, element1.Rect.Y);
+					Assert.AreEqual(element3.Rect.X, element1.Rect.X);
+				}
+			}
+			else
+			{
+				if (isList)
+				{
+					Assert.AreEqual(element1.Rect.Y, element2.Rect.Y);
+					Assert.Greater(element2.Rect.X, element1.Rect.X);
+				}
+				else
+				{
+					var element3 = App.Query(c => c.Marked("Item: 3"))[0];
+					Assert.AreEqual(element2.Rect.X, element1.Rect.X);
+					Assert.Greater(element3.Rect.X, element1.Rect.X);
+					Assert.AreEqual(element3.Rect.Y, element1.Rect.Y);
+				}
+			}
 		}
 	}
 }
