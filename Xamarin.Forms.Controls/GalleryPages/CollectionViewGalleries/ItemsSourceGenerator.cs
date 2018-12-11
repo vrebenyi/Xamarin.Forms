@@ -24,7 +24,6 @@ namespace Xamarin.Forms.Controls.GalleryPages.CollectionViewGalleries
 		public override string ToString()
 		{
 			return $"Item: {Index}";
-			//return $"{Date:D}";
 		}
 	}
 
