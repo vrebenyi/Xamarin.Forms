@@ -20,7 +20,6 @@ namespace Xamarin.Forms.Platform.iOS
 	{
 		const int DefaultRowHeight = 44;
 		ListViewDataSource _dataSource;
-		bool _estimatedRowHeight;
 		IVisualElementRenderer _headerRenderer;
 		IVisualElementRenderer _footerRenderer;
 
@@ -238,7 +237,6 @@ namespace Xamarin.Forms.Platform.iOS
 
 				Control.Source = _dataSource = e.NewElement.HasUnevenRows ? new UnevenListViewDataSource(e.NewElement, _tableViewController) : new ListViewDataSource(e.NewElement, _tableViewController);
 
-				//UpdateEstimatedRowHeight();
 				UpdateHeader();
 				UpdateFooter();
 				UpdatePullToRefreshEnabled();
@@ -264,7 +262,6 @@ namespace Xamarin.Forms.Platform.iOS
 				_dataSource.UpdateGrouping();
 			else if (e.PropertyName == Xamarin.Forms.ListView.HasUnevenRowsProperty.PropertyName)
 			{
-				_estimatedRowHeight = false;
 				Control.Source = _dataSource = Element.HasUnevenRows ? new UnevenListViewDataSource(_dataSource) : new ListViewDataSource(_dataSource);
 				Control.ReloadData();
 			}
@@ -510,7 +507,6 @@ namespace Xamarin.Forms.Platform.iOS
 			switch (e.Action)
 			{
 				case NotifyCollectionChangedAction.Add:
-					//UpdateEstimatedRowHeight();
 					if (e.NewStartingIndex == -1 || groupReset)
 						goto case NotifyCollectionChangedAction.Reset;
 
@@ -528,7 +524,7 @@ namespace Xamarin.Forms.Platform.iOS
 
 					Control.EndUpdates();
 
-					if (_estimatedRowHeight && TemplatedItemsView.TemplatedItems.Count == 0)
+					if (TemplatedItemsView.TemplatedItems.Count == 0)
 						InvalidateCellCache();
 
 
@@ -553,7 +549,7 @@ namespace Xamarin.Forms.Platform.iOS
 					}
 					Control.EndUpdates();
 
-					if (_estimatedRowHeight && e.OldStartingIndex == 0)
+					if (e.OldStartingIndex == 0)
 						InvalidateCellCache();
 
 					break;
@@ -565,9 +561,8 @@ namespace Xamarin.Forms.Platform.iOS
 					Control.ReloadRows(GetPaths(section, e.OldStartingIndex, e.OldItems.Count), ReloadRowsAnimation);
 					Control.EndUpdates();
 
-					if (_estimatedRowHeight && e.OldStartingIndex == 0)
+					if (e.OldStartingIndex == 0)
 						InvalidateCellCache();
-
 
 					break;
 
@@ -580,7 +575,6 @@ namespace Xamarin.Forms.Platform.iOS
 
 		void InvalidateCellCache()
 		{
-			_estimatedRowHeight = false;
 			_dataSource.InvalidatePrototypicalCellCache();
 		}
 
@@ -644,7 +638,6 @@ namespace Xamarin.Forms.Platform.iOS
 		{
 			IVisualElementRenderer _prototype;
 			bool _disposed;
-			bool _estimatedRowHeight;
 			Dictionary<object, Cell> _prototypicalCellByTypeOrDataTemplate = new Dictionary<object, Cell>();
 
 			public UnevenListViewDataSource(ListView list, FormsUITableViewController uiTableViewController) : base(list, uiTableViewController)
@@ -707,12 +700,7 @@ namespace Xamarin.Forms.Platform.iOS
 
 			protected override void UpdateEstimatedRowHeight(UITableView tableView)
 			{
-				if (_estimatedRowHeight)
-					return;
-
 				tableView.EstimatedRowHeight = GetEstimatedRowHeight(tableView);
-
-				_estimatedRowHeight = true;
 			}
 
 			internal Cell GetPrototypicalCell(NSIndexPath indexPath)
@@ -838,7 +826,6 @@ namespace Xamarin.Forms.Platform.iOS
 			bool _selectionFromNative;
 			bool _disposed;
 			int _previousCount = -1;
-			bool _needCellSizeUpdate;
 			bool _estimatedRowHeight;
 
 			public UITableViewRowAnimation ReloadSectionsAnimation { get; set; } = UITableViewRowAnimation.Automatic;
@@ -868,13 +855,11 @@ namespace Xamarin.Forms.Platform.iOS
 
 			public Dictionary<int, int> Counts { get; set; }
 
-			UIColor DefaultBackgroundColor
-			{
-				get { return UIColor.Clear; }
-			}
+			UIColor DefaultBackgroundColor => UIColor.Clear;
 
 			internal virtual void InvalidatePrototypicalCellCache()
 			{
+				_estimatedRowHeight = false;
 			}
 
 			public override void DraggingEnded(UIScrollView scrollView, bool willDecelerate)
@@ -1061,19 +1046,14 @@ namespace Xamarin.Forms.Platform.iOS
 				tableView.EndEditing(true);
 				List.NotifyRowTapped(indexPath.Section, indexPath.Row, formsCell);
 			}
+
 			public override void WillDisplay(UITableView tableView, UITableViewCell cell, NSIndexPath indexPath)
 			{
-				if (_needCellSizeUpdate)
+				if (!_estimatedRowHeight)
 				{
 					// Our cell size/estimate is out of date, probably because we moved from zero to one item; update it
-					_needCellSizeUpdate = false;
-					DetermineCellSize();
+					DetermineEstimatedRowHeight();
 				}
-			}
-
-			void DetermineCellSize()
-			{
-				UpdateEstimatedRowHeight(_uiTableView);
 			}
 
 			public override nint RowsInSection(UITableView tableview, nint section)
@@ -1086,7 +1066,7 @@ namespace Xamarin.Forms.Platform.iOS
 					{
 						// We've moved from no items to having at least one item; it's likely that the layout needs to update
 						// its cell size/estimate
-						_needCellSizeUpdate = true;
+						_estimatedRowHeight = false;
 					}
 					_previousCount = countOverride;
 					return countOverride;
@@ -1141,6 +1121,16 @@ namespace Xamarin.Forms.Platform.iOS
 			{
 				UpdateShortNameListener();
 				_uiTableView.ReloadData();
+			}
+
+			public void DetermineEstimatedRowHeight()
+			{
+				if (_estimatedRowHeight)
+					return;
+
+				UpdateEstimatedRowHeight(_uiTableView);
+
+				_estimatedRowHeight = true;
 			}
 
 			protected bool IsValidIndexPath(NSIndexPath indexPath)
@@ -1250,9 +1240,7 @@ namespace Xamarin.Forms.Platform.iOS
 
 			protected virtual void UpdateEstimatedRowHeight(UITableView tableView)
 			{
-				if (_estimatedRowHeight)
-					return;
-
+			
 				// We need to set a default estimated row height, 
 				// because re-setting it later(when we have items on the TIL)
 				// will cause the UITableView to reload, and throw an Exception
@@ -1260,12 +1248,7 @@ namespace Xamarin.Forms.Platform.iOS
 
 				// if even rows OR uneven rows but user specified a row height anyway...
 				if (!List.HasUnevenRows || List.RowHeight != -1)
-				{
 					tableView.EstimatedRowHeight = 0;
-				}
-				
-				//Control.EstimatedRowHeight = source.GetEstimatedRowHeight(Control);
-				_estimatedRowHeight = true;
 			}
 
 			protected override void Dispose(bool disposing)
@@ -1437,6 +1420,11 @@ namespace Xamarin.Forms.Platform.iOS
 			// Restart the refreshing to get the animation to trigger
 			UpdateIsRefreshing(false);
 			UpdateIsRefreshing(true);
+		}
+
+		public override void ViewWillLayoutSubviews()
+		{
+			(TableView?.Source as ListViewRenderer.ListViewDataSource)?.DetermineEstimatedRowHeight();
 		}
 
 		protected override void Dispose(bool disposing)
