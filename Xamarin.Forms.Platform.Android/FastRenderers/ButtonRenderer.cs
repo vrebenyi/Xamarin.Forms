@@ -9,9 +9,9 @@ using Android.Views;
 using Xamarin.Forms.Internals;
 using AView = Android.Views.View;
 using static System.String;
+using Android.Support.V4.View;
 using AColor = Android.Graphics.Color;
 using Xamarin.Forms.PlatformConfiguration.AndroidSpecific;
-using Android.Support.V4.View;
 
 namespace Xamarin.Forms.Platform.Android.FastRenderers
 {
@@ -142,10 +142,10 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 		{
 			if (_defaultLabelFor == null)
 			{
-				_defaultLabelFor = LabelFor;
+				_defaultLabelFor = ViewCompat.GetLabelFor(this);
 			}
 
-			LabelFor = (int)(id ?? _defaultLabelFor);
+			ViewCompat.SetLabelFor(this, (int)(id ?? _defaultLabelFor));
 		}
 
 		void IVisualElementRenderer.UpdateLayout() => _tracker?.UpdateLayout();
@@ -423,10 +423,13 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 			}
 
 			string oldText = Text;
-			Text = Button.Text;
+			string newText = Button.Text;
+
+			if (oldText != newText)
+				Text = newText;
 
 			// If we went from or to having no text, we need to update the image position
-			if (IsNullOrEmpty(oldText) != IsNullOrEmpty(Text))
+			if (IsNullOrEmpty(oldText) != IsNullOrEmpty(newText))
 			{
 				UpdateBitmap();
 			}

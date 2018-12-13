@@ -430,7 +430,9 @@ namespace Xamarin.Forms.CustomAttributes
 			GroupDisplayBinding,
 			GroupShortNameBinding,
 			ScrollTo,
-			FastScroll
+			FastScroll,
+			RefreshControlColor,
+			ScrollBarVisibility
 		}
 
 		public enum TableView
@@ -439,6 +441,7 @@ namespace Xamarin.Forms.CustomAttributes
 			Intent,
 			RowHeight,
 			HasUnevenRows,
+			TableSection
 		}
 
 		public enum TableSectionBase
@@ -528,7 +531,8 @@ namespace Xamarin.Forms.CustomAttributes
 			TextDisabledColor,
 			PlaceholderDisabledColor,
 			PasswordColor,
-			MaxLength
+			MaxLength,
+			IsPasswordNumeric
 		}
 
 		public enum Frame

@@ -34,6 +34,9 @@ namespace Xamarin.Forms.Platform.iOS
 		bool _disposed;
 		bool _usingLargeTitles;
 
+		bool? _defaultHorizontalScrollVisibility;
+		bool? _defaultVerticalScrollVisibility;
+
 		protected UITableViewRowAnimation InsertRowsAnimation { get; set; } = UITableViewRowAnimation.Automatic;
 		protected UITableViewRowAnimation DeleteRowsAnimation { get; set; } = UITableViewRowAnimation.Automatic;
 		protected UITableViewRowAnimation ReloadRowsAnimation { get; set; } = UITableViewRowAnimation.Automatic;
@@ -244,6 +247,9 @@ namespace Xamarin.Forms.Platform.iOS
 				UpdateSeparatorColor();
 				UpdateSeparatorVisibility();
 				UpdateSelectionMode();
+				UpdateSpinnerColor();
+				UpdateVerticalScrollBarVisibility();
+				UpdateHorizontalScrollBarVisibility();
 
 				var selected = e.NewElement.SelectedItem;
 				if (selected != null)
@@ -281,6 +287,12 @@ namespace Xamarin.Forms.Platform.iOS
 				UpdatePullToRefreshEnabled();
 			else if (e.PropertyName == Xamarin.Forms.ListView.SelectionModeProperty.PropertyName)
 				UpdateSelectionMode();
+			else if (e.PropertyName == Xamarin.Forms.ListView.RefreshControlColorProperty.PropertyName)
+				UpdateSpinnerColor();
+			else if (e.PropertyName == ScrollView.VerticalScrollBarVisibilityProperty.PropertyName)
+				UpdateVerticalScrollBarVisibility();
+			else if (e.PropertyName == ScrollView.HorizontalScrollBarVisibilityProperty.PropertyName)
+				UpdateHorizontalScrollBarVisibility();
 		}
 
 		NSIndexPath[] GetPaths(int section, int index, int count)
@@ -633,6 +645,51 @@ namespace Xamarin.Forms.Platform.iOS
 			}
 		}
 
+		void UpdateSpinnerColor()
+		{
+			var color = Element.RefreshControlColor;
+
+			if (_tableViewController != null)
+				_tableViewController.UpdateRefreshControlColor(color == Color.Default ? null : color.ToUIColor());
+    }
+    
+		void UpdateVerticalScrollBarVisibility()
+		{
+			if (_defaultVerticalScrollVisibility == null)
+				_defaultVerticalScrollVisibility = Control.ShowsVerticalScrollIndicator;
+
+			switch (Element.VerticalScrollBarVisibility)
+			{
+				case (ScrollBarVisibility.Always):
+					Control.ShowsVerticalScrollIndicator = true;
+					break;
+				case (ScrollBarVisibility.Never):
+					Control.ShowsVerticalScrollIndicator = false;
+					break;
+				case (ScrollBarVisibility.Default):
+					Control.ShowsVerticalScrollIndicator = (bool)_defaultVerticalScrollVisibility;
+					break;
+			}
+		}
+
+		void UpdateHorizontalScrollBarVisibility()
+		{
+			if (_defaultHorizontalScrollVisibility == null)
+				_defaultHorizontalScrollVisibility = Control.ShowsHorizontalScrollIndicator;
+
+			switch (Element.HorizontalScrollBarVisibility)
+			{
+				case (ScrollBarVisibility.Always):
+					Control.ShowsHorizontalScrollIndicator = true;
+					break;
+				case (ScrollBarVisibility.Never):
+					Control.ShowsHorizontalScrollIndicator = false;
+					break;
+				case (ScrollBarVisibility.Default):
+					Control.ShowsHorizontalScrollIndicator = (bool)_defaultHorizontalScrollVisibility;
+					break;
+			}
+		}
 
 		internal class UnevenListViewDataSource : ListViewDataSource
 		{
@@ -1430,6 +1487,12 @@ namespace Xamarin.Forms.Platform.iOS
 		public override void ViewWillLayoutSubviews()
 		{
 			(TableView?.Source as ListViewRenderer.ListViewDataSource)?.DetermineEstimatedRowHeight();
+    }
+
+		public void UpdateRefreshControlColor(UIColor color)
+		{
+			if (RefreshControl != null)
+				RefreshControl.TintColor = color;
 		}
 
 		protected override void Dispose(bool disposing)

@@ -11,6 +11,7 @@ using AMotionEventActions = Android.Views.MotionEventActions;
 using static System.String;
 using AColor = Android.Graphics.Color;
 using Xamarin.Forms.PlatformConfiguration.AndroidSpecific;
+using Xamarin.Forms.Platform.Android.FastRenderers;
 
 namespace Xamarin.Forms.Platform.Android.AppCompat
 {
@@ -25,6 +26,7 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 		int _imageHeight = -1;
 		Thickness _paddingDeltaPix = new Thickness();
 		IVisualElementRenderer _visualElementRenderer;
+		string _defaultContentDescription;
 
 		public ButtonRenderer(Context context) : base(context)
 		{
@@ -42,6 +44,9 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 		}
 
 		global::Android.Widget.Button NativeButton => Control;
+
+		protected override void SetContentDescription()
+			=> AutomationPropertiesProvider.SetBasicContentDescription(this, Element, ref _defaultContentDescription);
 
 		void AView.IOnAttachStateChangeListener.OnViewAttachedToWindow(AView attachedView)
 		{
