@@ -9,10 +9,23 @@
     <Import_RootNamespace>Xamarin.Forms.Controls.Issues</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Bugzilla60787.xaml.cs">
+      <DependentUpon>Bugzilla60787.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Issue1588.xaml.cs">
+      <DependentUpon>Issue1588.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Issue4597.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Github3856.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Issue3788.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Issue1937.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue3809.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue2894.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Issue3306.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Issue3308.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Issue3788.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Issue1724.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue3524.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue2004.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue3333.cs" />
@@ -105,6 +118,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Bugzilla37863.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Bugzilla37601.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Bugzilla38105.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Issue3652.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Bugzilla38723.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Bugzilla38770.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Bugzilla38827.xaml.cs">
@@ -379,7 +393,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)Issue3507.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue3367.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue3398.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Issue3558.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue3541.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Issue3840.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Issue3913.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Issue4136.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LegacyComponents\NonAppCompatSwitch.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MapsModalCrash.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ModalActivityIndicatorTest.cs" />
@@ -516,6 +534,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Issue1236.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue1259.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue1267.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Issue4187.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue1305.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue1329.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Issue1384.cs" />
@@ -803,6 +822,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Issue4356.cs">
       <DependentUpon>Issue4356.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Issue3884.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Issue4001.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Issue4138.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Issue4314.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Bugzilla22229.xaml">
@@ -981,6 +1004,18 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Issue2858.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Issue1588.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Bugzilla60787.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
