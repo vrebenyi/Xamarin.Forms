@@ -74,7 +74,6 @@ namespace Xamarin.Forms.Platform.Android
 					_itemsSource?.Dispose();
 					_itemsSource = null;
 					_createView = null;
-					_context = null;
 				}
 
 				_disposed = true;
