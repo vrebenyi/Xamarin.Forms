@@ -21,6 +21,7 @@ namespace Xamarin.Forms.Platform.Android
 		}
 
 		[Obsolete("This constructor is obsolete as of version 2.5. Please use ViewRenderer(Context) instead.")]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		protected ViewRenderer()
 		{
 		}
@@ -33,6 +34,7 @@ namespace Xamarin.Forms.Platform.Android
 		}
 
 		[Obsolete("This constructor is obsolete as of version 2.5. Please use ViewRenderer(Context) instead.")]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		protected ViewRenderer() 
 		{
 		}
@@ -266,8 +268,13 @@ namespace Xamarin.Forms.Platform.Android
 				var handler = new Handler(looper);
 				handler.Post(() =>
 				{
-					if(!_disposed)
-						Control?.RequestFocus();
+					if (Control == null || Control.IsDisposed())
+						return;
+
+					if (Control is IPopupTrigger popupElement)
+						popupElement.ShowPopupOnFocus = true;
+
+					Control.RequestFocus();
 				});
 			}
 			else

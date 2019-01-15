@@ -31,7 +31,7 @@ namespace Xamarin.Forms.Controls.Issues
 		string _disappearText = "You should see 4 images. Clicking this should cause the images to all disappear";
 		string _appearText = "Clicking this should cause the images to all appear";
 		string _theListView = "theListViewAutomationId";
-		string _fileName = "coffee";
+		string _fileName = "coffee.png";
 
 		protected override void Init()
 		{
@@ -65,7 +65,7 @@ namespace Xamarin.Forms.Controls.Issues
 						_button.Image = null;
 						_imageButton.Source = null;
 						_listView.ItemsSource = new string[] { null };
-						button.Text = _appearText;
+						Device.BeginInvokeOnMainThread(() => button.Text = _appearText);
 					}
 					else
 					{
@@ -73,7 +73,7 @@ namespace Xamarin.Forms.Controls.Issues
 						_button.Image = _fileName;
 						_imageButton.Source = _fileName;
 						_listView.ItemsSource = new string[] { _fileName };
-						button.Text = _disappearText;
+						Device.BeginInvokeOnMainThread(() => button.Text = _disappearText);
 					}
 				})
 			};
@@ -109,6 +109,7 @@ namespace Xamarin.Forms.Controls.Issues
 			Assert.IsNotNull(imageCell);
 
 			RunningApp.Tap("ClickMe");
+			RunningApp.WaitForElement(_appearText);
 			var elementsAfter = RunningApp.WaitForElement(_fileName);
 			var imageCellAfter = RunningApp.Query(app => app.Marked(_theListView).Descendant()).Where(x => x.Class.Contains("Image")).FirstOrDefault();
 			Assert.IsNull(imageCellAfter);

@@ -65,6 +65,7 @@ namespace Xamarin.Forms.Platform.Android
 		}		  		
 
 		[Obsolete("This constructor is obsolete as of version 2.5. Please use VisualElementRenderer(Context) instead.")]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		protected VisualElementRenderer() : this(Forms.Context)
 		{
 		}
@@ -167,8 +168,8 @@ namespace Xamarin.Forms.Platform.Android
 			} while (!(control?.Focusable == true || ++attempt >= maxAttempts));
 
 			// when the user focuses on picker show a popup dialog
-			if (control is PickerEditText picker)
-				picker.FromFocusSearch = true;
+			if (control is IPopupTrigger popupElement)
+				popupElement.ShowPopupOnFocus = true;
 
 			return control;
 		}
