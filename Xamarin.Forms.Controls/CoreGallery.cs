@@ -271,6 +271,7 @@ namespace Xamarin.Forms.Controls
 		}
 
 		List<GalleryPageFactory> _pages = new List<GalleryPageFactory> {
+				new GalleryPageFactory(() => new Issues.A11yTabIndex(), "Accessibility TabIndex"),
 				new GalleryPageFactory(() => new FontImageSourceGallery(), "Font ImageSource"),
 				new GalleryPageFactory(() => new CollectionViewGallery(), "CollectionView Gallery"),
 				new GalleryPageFactory(() => new CollectionViewCoreGalleryPage(), "CollectionView Core Gallery"),
@@ -465,13 +466,14 @@ namespace Xamarin.Forms.Controls
 
 			var searchBar = new SearchBar()
 			{
-				AutomationId = "SearchBar"
+				AutomationId = "SearchBar",
 			};
 
 			var testCasesButton = new Button
 			{
 				Text = "Go to Test Cases",
 				AutomationId = "GoToTestButton",
+				TabIndex = -2,
 				Command = new Command(async () =>
 				{
 					if (!string.IsNullOrEmpty(searchBar.Text))
@@ -488,6 +490,7 @@ namespace Xamarin.Forms.Controls
 					searchBar,
 					new Button {
 						Text = "Click to Force GC",
+						TabIndex = -2,
 						Command = new Command(() => {
 							GC.Collect ();
 							GC.WaitForPendingFinalizers ();
