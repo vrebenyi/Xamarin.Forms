@@ -314,6 +314,7 @@
     <Compile Include="Renderers\IPopupTrigger.cs" />
     <Compile Include="Material\MaterialActivityIndicatorRenderer.cs" />
     <Compile Include="Material\MaterialColors.cs" />
+    <Compile Include="CollectionView\PageIndicator.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

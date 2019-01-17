@@ -106,6 +106,8 @@ namespace Xamarin.Forms.Controls
 
 		public Page CreateDefaultMainPage()
 		{
+
+			Device.SetFlags(new[] { "CollectionView_Experimental" });
 			var layout = new StackLayout { BackgroundColor = Color.Red };
 			layout.Children.Add(new Label { Text = "This is master Page" });
 			var master = new ContentPage { Title = "Master", Content = layout, BackgroundColor = Color.SkyBlue, Icon ="menuIcon" };
@@ -114,7 +116,7 @@ namespace Xamarin.Forms.Controls
 			{
 				AutomationId = DefaultMainPageId,
 				Master = master,
-				Detail = CoreGallery.GetMainPage()
+				Detail = new GalleryPages.CollectionViewGalleries.CarouselCodeGallery(ItemsLayoutOrientation.Horizontal)
 			};
 			master.Icon.AutomationId = "btnMDPAutomationID";
 			mdp.SetAutomationPropertiesName("Main page");
@@ -123,7 +125,6 @@ namespace Xamarin.Forms.Controls
 			mdp.Master.Icon.SetAutomationPropertiesName("MDPICON");
 			return mdp;
 
-			//Device.SetFlags(new[] { "Shell_Experimental" });
             //return new XamStore.StoreShell();
         }
 
