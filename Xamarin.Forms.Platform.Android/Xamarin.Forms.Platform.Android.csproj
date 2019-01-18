@@ -315,6 +315,9 @@
     <Compile Include="ButtonElementManager.cs" />
     <Compile Include="IButtonLayoutRenderer.cs" />
     <Compile Include="ButtonLayoutManager.cs" />
+    <Compile Include="IStepperRenderer.cs" />
+    <Compile Include="StepperRendererManager.cs" />
+    <Compile Include="Material\MaterialStepperRenderer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
