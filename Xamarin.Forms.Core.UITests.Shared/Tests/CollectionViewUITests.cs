@@ -11,14 +11,14 @@ namespace Xamarin.Forms.Core.UITests
 		string _entryUpdate = "entryUpdate";
 		string _entryInsert = "entryInsert";
 		string _entryRemove = "entryRemove";
-		//string _entryReplace = "entryReplace";
+		string _entryReplace = "entryReplace";
 		string _entryScrollTo = "entryScrollTo";
 		string _btnInsert = "btnInsert";
 		string _btnRemove = "btnRemove";
-		//string _btnReplace = "btnReplace";
+		string _btnReplace = "btnReplace";
 		string _btnGo = "btnGo";
 		string _inserted = "Inserted";
-		//string _replaced = "Replacement";
+		string _replaced = "Replacement";
 		string _picker = "pickerSelectItem";
 #if __ANDROID__
 		string _dialogAndroidFrame = "select_dialog_listview";
@@ -206,11 +206,11 @@ namespace Xamarin.Forms.Core.UITests
 			App.Tap(_btnInsert);
 			App.WaitForElement(_inserted);
 			//TODO: enable replace
-			//App.ClearText(_entryReplace);
-			//App.EnterText(_entryReplace, "1");
-			//App.DismissKeyboard();
-			//App.Tap(_btnReplace);
-			//App.WaitForElement(_replaced);
+			App.ClearText(_entryReplace);
+			App.EnterText(_entryReplace, "1");
+			App.DismissKeyboard();
+			App.Tap(_btnReplace);
+			App.WaitForElement(_replaced);
 		}
 
 		void TestUpdateItemsWorks(bool scrollDown, string itemMarked, string updateItemsCount, UITest.Queries.AppRect collectionViewFrame)
