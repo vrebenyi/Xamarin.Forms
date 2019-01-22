@@ -9,7 +9,7 @@ namespace Xamarin.Forms.Platform.Android
 	{
 		protected readonly SelectableItemsView SelectableItemsView;
 
-		internal SelectableItemsViewAdapter(SelectableItemsView selectableItemsView, 
+		internal SelectableItemsViewAdapter(SelectableItemsView selectableItemsView,
 			Func<IVisualElementRenderer, Context, global::Android.Views.View> createView = null) : base(selectableItemsView, createView)
 		{
 			SelectableItemsView = selectableItemsView;
@@ -39,7 +39,7 @@ namespace Xamarin.Forms.Platform.Android
 				selectable.IsSelected = true;
 			}
 		}
-	
+
 		public override void OnViewRecycled(Object holder)
 		{
 			if (holder is SelectableViewHolder selectable)
@@ -56,7 +56,7 @@ namespace Xamarin.Forms.Platform.Android
 			UpdateFormsSelection(adapterPosition);
 		}
 
-		void UpdateFormsSelection(int adapterPosition)
+		internal void UpdateFormsSelection(int adapterPosition)
 		{
 			var mode = SelectableItemsView.SelectionMode;
 
@@ -69,7 +69,7 @@ namespace Xamarin.Forms.Platform.Android
 					SelectableItemsView.SelectedItem = ItemsSource[adapterPosition];
 					return;
 				case SelectionMode.Multiple:
-					// TODO hartez 2018/11/06 22:22:42 Once SelectedItems is available, toggle ItemsSource[adapterPosition] here	
+					// TODO hartez 2018/11/06 22:22:42 Once SelectedItems is available, toggle ItemsSource[adapterPosition] here
 					return;
 				default:
 					throw new ArgumentOutOfRangeException();
