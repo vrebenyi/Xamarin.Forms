@@ -26,7 +26,7 @@ namespace Xamarin.Forms.Platform.iOS
 		public ItemsViewController(ItemsView itemsView, ItemsViewLayout layout) : base(layout)
 		{
 			_itemsView = itemsView;
-			_itemsSource = ItemsSourceFactory.Create(_itemsView.ItemsSource, CollectionView);
+			_itemsSource = ItemsSourceFactory.Create(_itemsView.ItemsSource, itemsSource => new ObservableItemsSource(itemsSource, CollectionView));
 			_layout = layout;
 
 			_layout.GetPrototype = GetPrototype;
@@ -96,7 +96,7 @@ namespace Xamarin.Forms.Platform.iOS
 
 		public virtual void UpdateItemsSource()
 		{
-			_itemsSource =  ItemsSourceFactory.Create(_itemsView.ItemsSource, CollectionView);
+			_itemsSource =  ItemsSourceFactory.Create(_itemsView.ItemsSource, itemsSource => new ObservableItemsSource(itemsSource, CollectionView));
 			CollectionView.ReloadData();
 			CollectionView.CollectionViewLayout.InvalidateLayout();
 		}
