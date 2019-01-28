@@ -8,6 +8,7 @@ namespace Xamarin.Forms.Platform.iOS
 	{
 		public ItemsViewLayout ItemsViewLayout { get; private set; }
 		public SelectableItemsViewController SelectableItemsViewController { get; set; }
+		public CarouselViewController CarouselViewController { get; set; }
 
 		public UICollectionViewDelegator(ItemsViewLayout itemsViewLayout) => ItemsViewLayout = itemsViewLayout;
 
@@ -57,6 +58,16 @@ namespace Xamarin.Forms.Platform.iOS
 		public override void ItemDeselected(UICollectionView collectionView, NSIndexPath indexPath)
 		{
 			SelectableItemsViewController?.ItemDeselected(collectionView, indexPath);
+		}
+
+		public override void Scrolled(UIScrollView scrollView)
+		{
+			CarouselViewController?.Scrolled(scrollView);
+		}
+
+		public override void DecelerationEnded(UIScrollView scrollView)
+		{
+			CarouselViewController?.DecelerationEnded(scrollView);
 		}
 	}
 }
