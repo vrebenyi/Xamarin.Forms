@@ -15,7 +15,8 @@
 
 				var image = new Image
 				{
-					HeightRequest = 100, WidthRequest = 100,
+					HeightRequest = 100,
+					WidthRequest = 100,
 					HorizontalOptions = LayoutOptions.Center,
 					VerticalOptions = LayoutOptions.Center
 				};
@@ -30,7 +31,7 @@
 				};
 
 				caption.SetBinding(Label.TextProperty, new Binding("Caption"));
-				
+
 				templateLayout.Children.Add(image);
 				templateLayout.Children.Add(caption);
 
@@ -46,7 +47,7 @@
 			{
 				var templateLayout = new Grid
 				{
-					RowDefinitions = new RowDefinitionCollection { new RowDefinition(), new RowDefinition {Height = GridLength.Auto} },
+					RowDefinitions = new RowDefinitionCollection { new RowDefinition(), new RowDefinition { Height = GridLength.Auto } },
 					WidthRequest = 280,
 					HeightRequest = 310,
 				};
@@ -72,13 +73,21 @@
 				};
 
 				caption.SetBinding(Label.TextProperty, new Binding("Caption"));
-				
+
 				templateLayout.Children.Add(image);
 				templateLayout.Children.Add(caption);
 
 				Grid.SetRow(caption, 1);
 
 				return templateLayout;
+			});
+		}
+
+		public static DataTemplate CarouselXamlTemplate()
+		{
+			return new DataTemplate(() =>
+			{
+				return new ExampleTemplateCarousel();
 			});
 		}
 
@@ -113,10 +122,11 @@
 				};
 
 				caption.SetBinding(Button.TextProperty, new Binding("Caption"));
-				caption.Clicked += (sender, e) => {
+				caption.Clicked += (sender, e) =>
+				{
 					App.Current.MainPage.DisplayAlert("Button works", (sender as Button).Text, "Ok");
 				};
-				
+
 				grid.Children.Add(image);
 				grid.Children.Add(caption);
 
@@ -128,7 +138,9 @@
 					Content = grid
 				};
 
-				return  frame;
+
+
+				return frame;
 			});
 		}
 
@@ -162,12 +174,13 @@
 				{
 					HorizontalOptions = LayoutOptions.Fill,
 					HorizontalTextAlignment = TextAlignment.Center,
-					HeightRequest = 40, WidthRequest = 100,
+					HeightRequest = 40,
+					WidthRequest = 100,
 					BackgroundColor = Color.Crimson,
 					Text = "Caption"
 				};
 
-				caption.SetBinding(Label.TextProperty, new Binding("Index", stringFormat:"Index {0}"));
+				caption.SetBinding(Label.TextProperty, new Binding("Index", stringFormat: "Index {0}"));
 
 				templateLayout.Children.Add(image);
 				templateLayout.Children.Add(caption);
@@ -186,7 +199,7 @@
 				{
 					BackgroundColor = Color.Bisque,
 
-					RowDefinitions = new RowDefinitionCollection { new RowDefinition(), new RowDefinition {Height = GridLength.Auto} },
+					RowDefinitions = new RowDefinitionCollection { new RowDefinition(), new RowDefinition { Height = GridLength.Auto } },
 					WidthRequest = 100,
 					HeightRequest = 140
 				};
@@ -207,13 +220,14 @@
 				{
 					HorizontalOptions = LayoutOptions.Fill,
 					HorizontalTextAlignment = TextAlignment.Center,
-					HeightRequest = 40, WidthRequest = 100,
+					HeightRequest = 40,
+					WidthRequest = 100,
 					BackgroundColor = Color.Crimson,
 					Text = "Caption"
 				};
 
 				caption.SetBinding(Label.TextProperty, new Binding("Date", stringFormat: "{0:d}"));
-				
+
 				templateLayout.Children.Add(image);
 				templateLayout.Children.Add(caption);
 
