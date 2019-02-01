@@ -87,7 +87,7 @@
 		{
 			return new DataTemplate(() =>
 			{
-				return new ExampleTemplateCarousel();
+				return new CarouselViewGalleries.ExampleTemplateCarousel();
 			});
 		}
 
