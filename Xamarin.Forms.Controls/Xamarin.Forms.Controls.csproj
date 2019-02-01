@@ -41,6 +41,9 @@
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
     <PackageReference Include="Xam.Plugin.DeviceInfo" Version="3.0.2" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="GalleryPages\CollectionViewGalleries\CarouselViewGalleries\" />
+  </ItemGroup>
   <Target Name="CreateControllGalleryConfig" BeforeTargets="Build">
     <CreateItem Include="blank.config">
       <Output TaskParameter="Include" ItemName="ConfigFile" />
