@@ -4,6 +4,29 @@ using UIKit;
 
 namespace Xamarin.Forms.Platform.iOS
 {
+	public class GroupableItemsViewController : SelectableItemsViewController
+	{
+		IGroupedItemsViewSource GroupedItemsViewSource => ItemsSource as IGroupedItemsViewSource;
+
+		public GroupableItemsView GroupableItemsView { get; }
+
+		public GroupableItemsViewController(GroupableItemsView groupableItemsView, ItemsViewLayout layout) 
+			: base(groupableItemsView, layout)
+		{
+			GroupableItemsView = groupableItemsView;
+		}
+
+		public override nint NumberOfSections(UICollectionView collectionView)
+		{
+			if (!GroupableItemsView.IsGroupingEnabled || GroupedItemsViewSource == null)
+			{
+				return 1;
+			}
+
+			return GroupedItemsViewSource.GroupCount;
+		}
+	}
+
 	public class SelectableItemsViewController : ItemsViewController
 	{
 		protected readonly SelectableItemsView SelectableItemsView;

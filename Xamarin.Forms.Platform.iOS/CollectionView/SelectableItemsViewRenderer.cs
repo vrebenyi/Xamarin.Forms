@@ -3,6 +3,17 @@ using System.ComponentModel;
 
 namespace Xamarin.Forms.Platform.iOS
 {
+	public class GroupableItemsViewRenderer : SelectableItemsViewRenderer
+	{
+		GroupableItemsView GroupableItemsView => (GroupableItemsView)Element;
+		GroupableItemsViewController GroupableItemsViewController => (GroupableItemsViewController)ItemsViewController;
+
+		protected override ItemsViewController CreateController(ItemsView itemsView, ItemsViewLayout layout)
+		{
+			return new GroupableItemsViewController(itemsView as GroupableItemsView, layout);
+		}
+	}
+
 	public class SelectableItemsViewRenderer : ItemsViewRenderer
 	{
 		SelectableItemsView SelectableItemsView => (SelectableItemsView)Element;

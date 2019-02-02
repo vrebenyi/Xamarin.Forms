@@ -3,6 +3,18 @@ using System.Windows.Input;
 
 namespace Xamarin.Forms
 {
+	public class GroupableItemsView : SelectableItemsView
+	{
+		public static readonly BindableProperty IsGroupingEnabledProperty =
+			BindableProperty.Create(nameof(IsGroupingEnabled), typeof(bool), typeof(GroupableItemsView), false);
+
+		public bool IsGroupingEnabled
+		{
+			get => (bool)GetValue(IsGroupingEnabledProperty);
+			set => SetValue(IsGroupingEnabledProperty, value);
+		}
+	}
+
 	public class SelectableItemsView : ItemsView
 	{
 		public static readonly BindableProperty SelectionModeProperty =

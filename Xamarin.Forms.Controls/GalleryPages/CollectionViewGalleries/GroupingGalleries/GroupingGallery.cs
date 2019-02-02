@@ -1,0 +1,31 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Xamarin.Forms.Controls.GalleryPages.CollectionViewGalleries.GroupingGalleries
+{
+    class GroupingGallery : ContentPage
+    {
+		public GroupingGallery()
+		{
+			var descriptionLabel =
+				new Label { Text = "Grouping Galleries", Margin = new Thickness(2, 2, 2, 2) };
+
+			Title = "Grouping Galleries";
+
+			Content = new ScrollView
+			{
+				Content = new StackLayout
+				{
+					Children =
+					{
+						descriptionLabel,
+						GalleryBuilder.NavButton("Basic Grouping", () =>
+							new BasicGrouping(), Navigation),
+						
+					}
+				}
+			};
+		}
+    }
+}

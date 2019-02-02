@@ -120,4 +120,15 @@ namespace Xamarin.Forms.Platform.iOS
 			_collectionView.DeleteItems(CreateIndexesFrom(startIndex, count));
 		}
 	}
+
+	internal class BasicGroupedSource : IGroupedItemsViewSource
+	{
+		readonly IList _groupSource;
+
+		public object this[int itemIndex] => _groupSource[itemIndex];
+		public object this[int groupIndex, int itemIndex] => ((IList)_groupSource[itemIndex])[itemIndex];
+
+		public int GroupCount => _groupSource.Count;
+		public int Count { get; }
+	}
 }

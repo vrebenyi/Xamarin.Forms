@@ -1,8 +1,14 @@
 ﻿namespace Xamarin.Forms.Platform.iOS
 {
-	internal interface IItemsViewSource
+	public interface IItemsViewSource
 	{
 		int Count { get; }
-		object this[int index] { get; }
+		object this[int itemIndex] { get; }
+	}
+
+	public interface IGroupedItemsViewSource : IItemsViewSource
+	{
+		int GroupCount { get; }
+		object this[int groupIndex, int itemIndex] { get; }
 	}
 }
