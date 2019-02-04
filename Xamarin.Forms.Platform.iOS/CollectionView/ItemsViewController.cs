@@ -1,5 +1,4 @@
 ﻿using System;
-using CoreGraphics;
 using Foundation;
 using UIKit;
 
@@ -124,7 +123,10 @@ namespace Xamarin.Forms.Platform.iOS
 
 		protected virtual IItemsViewSource CreateItemsViewSource()
 		{
-			return ItemsSourceFactory.Create(ItemsView.ItemsSource, CollectionView);
+			var x = ItemsView.ItemsSource;
+
+
+			return ItemsSourceFactory.Create(x, CollectionView);
 		}
 
 		public virtual void UpdateItemsSource()

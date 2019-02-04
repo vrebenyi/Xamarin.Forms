@@ -17,6 +17,12 @@
 				</DataTemplate>
 			</CollectionView.HeaderTemplate>
 			
+			<CollectionView.FooterTemplate>
+				<DataTemplate>
+					<Label Text="Copyright 2019" BackgroundColor="Orange"/>
+				</DataTemplate>
+			</CollectionView.FooterTemplate>
+			
 		</CollectionView>
 	</ContentPage.Content>
 </ContentPage>
