@@ -3,6 +3,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Xamarin.Forms.Controls.GalleryPages.CollectionViewGalleries.GroupingGalleries.BasicGrouping">
 	<ContentPage.Content>
-		<CollectionView x:Name="CollectionView" ItemsLayout="ListItemsLayout.VerticalList" />
+		<CollectionView x:Name="CollectionView" ItemsLayout="ListItemsLayout.VerticalList">
+			<CollectionView.ItemTemplate>
+				<DataTemplate>
+					<Label Text="{Binding Name}"/>
+
+				</DataTemplate>
+				
+			</CollectionView.ItemTemplate>
+			
+		</CollectionView>
 	</ContentPage.Content>
 </ContentPage>

@@ -6,35 +6,55 @@ namespace Xamarin.Forms.Platform.iOS
 {
 	public class GroupableItemsViewController : SelectableItemsViewController
 	{
-		IGroupedItemsViewSource GroupedItemsViewSource => ItemsSource as IGroupedItemsViewSource;
-
-		public GroupableItemsView GroupableItemsView { get; }
-
+		GroupableItemsView GroupableItemsView => (GroupableItemsView)ItemsView;
+		
 		public GroupableItemsViewController(GroupableItemsView groupableItemsView, ItemsViewLayout layout) 
 			: base(groupableItemsView, layout)
 		{
-			GroupableItemsView = groupableItemsView;
 		}
 
 		public override nint NumberOfSections(UICollectionView collectionView)
 		{
-			if (!GroupableItemsView.IsGroupingEnabled || GroupedItemsViewSource == null)
+			if (!GroupableItemsView.IsGroupingEnabled)
 			{
 				return 1;
 			}
 
-			return GroupedItemsViewSource.GroupCount;
+			return ((IGroupedItemsViewSource)ItemsSource).GroupCount;
+		}
+
+		protected override IItemsViewSource CreateItemsViewSource()
+		{
+			if (GroupableItemsView.IsGroupingEnabled)
+			{
+				return ItemsSourceFactory.CreateGrouped(GroupableItemsView.ItemsSource, CollectionView);
+			}
+
+			return base.CreateItemsViewSource();
+		}
+
+		public override nint GetItemsCount(UICollectionView collectionView, nint section)
+		{
+			var totalCount = base.GetItemsCount(collectionView, section);
+
+			if (totalCount > 0)
+			{
+				return ((IGroupedItemsViewSource)ItemsSource).CountInGroup((int)section);
+			}
+			else
+			{
+				return 0;
+			}
 		}
 	}
 
 	public class SelectableItemsViewController : ItemsViewController
 	{
-		protected readonly SelectableItemsView SelectableItemsView;
+		SelectableItemsView SelectableItemsView => (SelectableItemsView)ItemsView;
 
 		public SelectableItemsViewController(SelectableItemsView selectableItemsView, ItemsViewLayout layout) 
 			: base(selectableItemsView, layout)
 		{
-			SelectableItemsView = selectableItemsView;
 			Delegator.SelectableItemsViewController = this;
 		}
 

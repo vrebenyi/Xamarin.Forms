@@ -9,6 +9,10 @@
 	public interface IGroupedItemsViewSource : IItemsViewSource
 	{
 		int GroupCount { get; }
-		object this[int groupIndex, int itemIndex] { get; }
+		int CountInGroup(int group);
+		object this[Foundation.NSIndexPath indexPath] { get; }
 	}
 }
+
+
+// TODO save you progress and try merging these interfaces

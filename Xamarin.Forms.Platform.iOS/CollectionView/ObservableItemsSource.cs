@@ -123,12 +123,61 @@ namespace Xamarin.Forms.Platform.iOS
 
 	internal class BasicGroupedSource : IGroupedItemsViewSource
 	{
+		readonly UICollectionView _collectionView;
 		readonly IList _groupSource;
 
-		public object this[int itemIndex] => _groupSource[itemIndex];
-		public object this[int groupIndex, int itemIndex] => ((IList)_groupSource[itemIndex])[itemIndex];
+		public BasicGroupedSource(IList groupSource, UICollectionView collectionView)
+		{
+			_collectionView = collectionView;
+			_groupSource = groupSource;
+		}
+
+		public object this[int itemIndex]
+		{
+			get
+			{
+				var current = itemIndex;
+
+				for (int group = 0; group < _groupSource.Count; group++)
+				{
+					var currentGroup = (IList)_groupSource[group];
+					if (current < currentGroup.Count)
+					{
+						return currentGroup[current];
+					}
+
+					current -= currentGroup.Count;
+				}
+
+				throw new ArgumentOutOfRangeException(nameof(itemIndex));
+			}
+		}
+
+		public object this[NSIndexPath indexPath] => ((IList)_groupSource[indexPath.Section])[indexPath.Row];
+
+		public int Count
+		{
+			get
+			{
+				var count = 0;
+
+				for (int group = 0; group < _groupSource.Count; group++)
+				{
+					if (_groupSource[group] is IList groupItems)
+					{
+						count += groupItems.Count;
+					}
+				}
+
+				return count;
+			}
+		}
 
 		public int GroupCount => _groupSource.Count;
-		public int Count { get; }
+
+		public int CountInGroup(int group)
+		{
+			return ((IList)_groupSource[group]).Count;
+		}
 	}
 }

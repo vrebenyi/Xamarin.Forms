@@ -24,5 +24,18 @@ namespace Xamarin.Forms.Platform.iOS
 
 			return new ListSource(itemsSource);
 		}
+
+		// TODO hartez We'll need test harnesses for grouped INCC and grouped without INCC
+		// TODO hartez And we'll a case selection below, we can't just assume that cast
+
+		public static IGroupedItemsViewSource CreateGrouped(IEnumerable itemsSource, UICollectionView collectionView)
+		{
+			if (itemsSource == null)
+			{
+				return new EmptySource();
+			}
+
+			return new BasicGroupedSource((IList)itemsSource, collectionView);
+		}
 	}
 }
