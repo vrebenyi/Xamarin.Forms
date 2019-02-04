@@ -1,18 +1,23 @@
-﻿namespace Xamarin.Forms.Platform.iOS
+﻿using System;
+
+namespace Xamarin.Forms.Platform.iOS
 {
 	public interface IItemsViewSource
 	{
-		int Count { get; }
-		object this[int itemIndex] { get; }
+		int ItemCount { get; }
+		int ItemCountInGroup(nint group);
+		int GroupCount { get; }
+		object this[Foundation.NSIndexPath indexPath] { get; }
+		object Group(Foundation.NSIndexPath indexPath);
 	}
 
-	public interface IGroupedItemsViewSource : IItemsViewSource
-	{
-		int GroupCount { get; }
-		int CountInGroup(int group);
-		object this[Foundation.NSIndexPath indexPath] { get; }
-	}
+	//public interface IGroupedItemsViewSource : IItemsViewSource
+	//{
+	//	int GroupCount { get; }
+	//	int CountInGroup(int group);
+		
+	//}
 }
 
 
-// TODO save you progress and try merging these interfaces
+// TODO save your progress and try merging these interfaces

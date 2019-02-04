@@ -4,13 +4,18 @@
              x:Class="Xamarin.Forms.Controls.GalleryPages.CollectionViewGalleries.GroupingGalleries.BasicGrouping">
 	<ContentPage.Content>
 		<CollectionView x:Name="CollectionView" ItemsLayout="ListItemsLayout.VerticalList">
+
 			<CollectionView.ItemTemplate>
 				<DataTemplate>
 					<Label Text="{Binding Name}"/>
-
 				</DataTemplate>
-				
 			</CollectionView.ItemTemplate>
+			
+			<CollectionView.HeaderTemplate>
+				<DataTemplate>
+					<Label Text="{Binding Name}" BackgroundColor="LightGreen"/>
+				</DataTemplate>
+			</CollectionView.HeaderTemplate>
 			
 		</CollectionView>
 	</ContentPage.Content>

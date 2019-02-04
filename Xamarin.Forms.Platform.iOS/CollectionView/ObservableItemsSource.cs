@@ -119,9 +119,38 @@ namespace Xamarin.Forms.Platform.iOS
 			var count = args.OldItems.Count;
 			_collectionView.DeleteItems(CreateIndexesFrom(startIndex, count));
 		}
+
+		public int ItemCountInGroup(nint group)
+		{
+			return _itemsSource.Count;
+		}
+
+		public object Group(NSIndexPath indexPath)
+		{
+			return null;
+		}
+
+		public int GroupCount => 1;
+
+		public int ItemCount => _itemsSource.Count;
+
+		public object this[NSIndexPath indexPath]
+		{
+			get
+			{
+				if (indexPath.Section > 0)
+				{
+					throw new ArgumentOutOfRangeException(nameof(indexPath));
+				}
+
+				return this[indexPath.Row];
+			}
+		}
+
+		public object this[int index] => _itemsSource[index];
 	}
 
-	internal class BasicGroupedSource : IGroupedItemsViewSource
+	internal class BasicGroupedSource : IItemsViewSource
 	{
 		readonly UICollectionView _collectionView;
 		readonly IList _groupSource;
@@ -132,52 +161,35 @@ namespace Xamarin.Forms.Platform.iOS
 			_groupSource = groupSource;
 		}
 
-		public object this[int itemIndex]
-		{
-			get
-			{
-				var current = itemIndex;
-
-				for (int group = 0; group < _groupSource.Count; group++)
-				{
-					var currentGroup = (IList)_groupSource[group];
-					if (current < currentGroup.Count)
-					{
-						return currentGroup[current];
-					}
-
-					current -= currentGroup.Count;
-				}
-
-				throw new ArgumentOutOfRangeException(nameof(itemIndex));
-			}
-		}
-
 		public object this[NSIndexPath indexPath] => ((IList)_groupSource[indexPath.Section])[indexPath.Row];
-
-		public int Count
-		{
-			get
-			{
-				var count = 0;
-
-				for (int group = 0; group < _groupSource.Count; group++)
-				{
-					if (_groupSource[group] is IList groupItems)
-					{
-						count += groupItems.Count;
-					}
-				}
-
-				return count;
-			}
-		}
 
 		public int GroupCount => _groupSource.Count;
 
-		public int CountInGroup(int group)
+		int IItemsViewSource.ItemCount
 		{
-			return ((IList)_groupSource[group]).Count;
+			get
+			{
+				// TODO hartez We should probably cache this value
+				var total = 0;
+
+				for (int n = 0; n < _groupSource.Count; n++)
+				{
+					var group = (IList)_groupSource[n];
+					total += group.Count;
+				}
+
+				return total;
+			}
+		}
+
+		public object Group(NSIndexPath indexPath)
+		{
+			return _groupSource[indexPath.Section];
+		}
+
+		public int ItemCountInGroup(nint group)
+		{
+			return ((IList)_groupSource[(int)group]).Count;
 		}
 	}
 }

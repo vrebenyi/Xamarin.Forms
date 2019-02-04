@@ -13,6 +13,16 @@ namespace Xamarin.Forms
 			get => (bool)GetValue(IsGroupingEnabledProperty);
 			set => SetValue(IsGroupingEnabledProperty, value);
 		}
+
+		public static readonly BindableProperty HeaderTemplateProperty =
+			BindableProperty.Create(nameof(HeaderTemplate), typeof(DataTemplate), typeof(GroupableItemsView));
+
+		public DataTemplate HeaderTemplate
+		{
+			get => (DataTemplate)GetValue(HeaderTemplateProperty);
+			set => SetValue(HeaderTemplateProperty, value);
+		}
+
 	}
 
 	public class SelectableItemsView : ItemsView

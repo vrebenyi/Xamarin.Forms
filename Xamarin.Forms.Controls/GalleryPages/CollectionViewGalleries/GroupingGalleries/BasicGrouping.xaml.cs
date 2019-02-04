@@ -14,6 +14,9 @@ namespace Xamarin.Forms.Controls.GalleryPages.CollectionViewGalleries.GroupingGa
 	[Preserve (AllMembers = true)]
 	public partial class BasicGrouping : ContentPage
 	{
+		// TODO hartez Need at least one gallery where the first group is empty
+		// to make sure we can find a cell to prototype properly
+		
 		public BasicGrouping ()
 		{
 			InitializeComponent ();

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
 using CoreGraphics;
 using Foundation;
 using UIKit;
@@ -11,7 +9,6 @@ namespace Xamarin.Forms.Platform.iOS
 	// TODO hartez 2018/06/01 14:21:24 Add a method for updating the layout	
 	public class ItemsViewController : UICollectionViewController
 	{
-		readonly ItemsViewLayout _layout;
 		bool _initialConstraintsSet;
 		bool _wasEmpty;
 
@@ -24,6 +21,8 @@ namespace Xamarin.Forms.Platform.iOS
 
 		public ItemsView ItemsView { get; }
 
+		protected ItemsViewLayout ItemsViewLayout { get; }
+
 		public ItemsViewController(ItemsView itemsView, ItemsViewLayout layout) : base(layout)
 		{
 			ItemsView = itemsView;
@@ -34,26 +33,25 @@ namespace Xamarin.Forms.Platform.iOS
 
 		public void UpdateLayout(ItemsViewLayout layout)
 		{
-			_layout = layout;
-			_layout.GetPrototype = GetPrototype;
+			ItemsViewLayout = layout;
+			ItemsViewLayout.GetPrototype = GetPrototype;
 
 			// If we're updating from a previous layout, we should keep any settings for the SelectableItemsViewController around
 			var selectableItemsViewController = Delegator?.SelectableItemsViewController;
-			Delegator = new UICollectionViewDelegator(_layout)
+			Delegator = new UICollectionViewDelegator(ItemsViewLayout)
 			{
 				SelectableItemsViewController = selectableItemsViewController
 			};
 
 			CollectionView.Delegate = Delegator;
 
-			if (CollectionView.CollectionViewLayout != _layout)
+			if (CollectionView.CollectionViewLayout != ItemsViewLayout)
 			{
 				// We're updating from a previous layout
 
 				// Make sure the new layout is sized properly
-				_layout.ConstrainTo(CollectionView.Bounds.Size);
+				ItemsViewLayout.ConstrainTo(CollectionView.Bounds.Size);
 				
-				CollectionView.SetCollectionViewLayout(_layout, false);
 				
 				// Reload the data so the currently visible cells get laid out according to the new layout
 				CollectionView.ReloadData();
@@ -62,7 +60,7 @@ namespace Xamarin.Forms.Platform.iOS
 
 		public override UICollectionViewCell GetCell(UICollectionView collectionView, NSIndexPath indexPath)
 		{
-			var cell = collectionView.DequeueReusableCell(DetermineCellReusedId(), indexPath) as UICollectionViewCell;
+			var cell = collectionView.DequeueReusableCell(DetermineCellReuseId(), indexPath) as UICollectionViewCell;
 
 			switch (cell)
 			{
@@ -79,20 +77,27 @@ namespace Xamarin.Forms.Platform.iOS
 
 		public override nint GetItemsCount(UICollectionView collectionView, nint section)
 		{
-			var count = ItemsSource.Count;
+			var count = ItemsSource.ItemCountInGroup(section);
 
-			if (_wasEmpty && count > 0)
+			CheckForEmptySource();
+
+			return count;
+		}
+
+		private void CheckForEmptySource()
+		{
+			var totalCount = ItemsSource.ItemCount;
+
+			if (_wasEmpty && totalCount > 0)
 			{
 				// We've moved from no items to having at least one item; it's likely that the layout needs to update
 				// its cell size/estimate
-				_layout?.SetNeedCellSizeUpdate();
+				ItemsViewLayout?.SetNeedCellSizeUpdate();
 			}
 
-			_wasEmpty = count == 0;
+			_wasEmpty = totalCount == 0;
 
 			UpdateEmptyViewVisibility(_wasEmpty);
-
-			return count;
 		}
 
 		public override void ViewDidLoad()
@@ -112,7 +117,7 @@ namespace Xamarin.Forms.Platform.iOS
 			// are set up the first time this method is called.
 			if (!_initialConstraintsSet)
 			{
-				_layout.ConstrainTo(CollectionView.Bounds.Size);
+				ItemsViewLayout.ConstrainTo(CollectionView.Bounds.Size);
 				_initialConstraintsSet = true;
 			}
 		}
@@ -131,11 +136,11 @@ namespace Xamarin.Forms.Platform.iOS
 
 		protected virtual void UpdateDefaultCell(DefaultCell cell, NSIndexPath indexPath)
 		{
-			cell.Label.Text = ItemsSource[indexPath.Row].ToString();
+			cell.Label.Text = ItemsSource[indexPath].ToString();
 
 			if (cell is ItemsViewCell constrainedCell)
 			{
-				_layout.PrepareCellForLayout(constrainedCell);
+				ItemsViewLayout.PrepareCellForLayout(constrainedCell);
 			}
 		}
 
@@ -145,15 +150,19 @@ namespace Xamarin.Forms.Platform.iOS
 
 			if (cell is ItemsViewCell constrainedCell)
 			{
-				_layout.PrepareCellForLayout(constrainedCell);
+				ItemsViewLayout.PrepareCellForLayout(constrainedCell);
 			}
 		}
 
 		public virtual NSIndexPath GetIndexForItem(object item)
 		{
-			for (int n = 0; n < ItemsSource.Count; n++)
+			// TODO hartez think about putting a method on IItemsViewSource for this 
+			// Needs to take a section, also could be a more efficient local implementation
+			// on the simple list versions if we don't have to create a ton of NSIndexPaths
+
+			for (int n = 0; n < ItemsSource.ItemCountInGroup(0); n++)
 			{
-				if (ItemsSource[n] == item)
+				if (ItemsSource[NSIndexPath.Create(0, n)] == item)
 				{
 					return NSIndexPath.Create(0, n);
 				}
@@ -164,7 +173,7 @@ namespace Xamarin.Forms.Platform.iOS
 
 		protected object GetItemAtIndex(NSIndexPath index)
 		{
-			return ItemsSource[index.Row];
+			return ItemsSource[index];
 		}
 
 		void ApplyTemplateAndDataContext(TemplatedCell cell, NSIndexPath indexPath)
@@ -175,12 +184,12 @@ namespace Xamarin.Forms.Platform.iOS
 
 			if (renderer != null)
 			{
-				BindableObject.SetInheritedBindingContext(renderer.Element, ItemsSource[indexPath.Row]);
+				BindableObject.SetInheritedBindingContext(renderer.Element, ItemsSource[indexPath]);
 				cell.SetRenderer(renderer);
 			}
 		}
 
-		IVisualElementRenderer CreateRenderer(View view)
+		protected IVisualElementRenderer CreateRenderer(View view)
 		{
 			if (view == null)
 			{
@@ -193,23 +202,25 @@ namespace Xamarin.Forms.Platform.iOS
 			return renderer;
 		}
 
-		string DetermineCellReusedId()
+		string DetermineCellReuseId()
 		{
 			if (ItemsView.ItemTemplate != null)
 			{
-				return _layout.ScrollDirection == UICollectionViewScrollDirection.Horizontal
+				return ItemsViewLayout.ScrollDirection == UICollectionViewScrollDirection.Horizontal
 					? HorizontalTemplatedCell.ReuseId
 					: VerticalTemplatedCell.ReuseId;
 			}
 
-			return _layout.ScrollDirection == UICollectionViewScrollDirection.Horizontal
+			return ItemsViewLayout.ScrollDirection == UICollectionViewScrollDirection.Horizontal
 				? HorizontalDefaultCell.ReuseId
 				: VerticalDefaultCell.ReuseId;
 		}
 
 		UICollectionViewCell GetPrototype()
 		{
-			if (ItemsSource.Count == 0)
+			// TODO hartez see TOOD below
+
+			if (ItemsSource.ItemCount == 0)
 			{
 				return null;
 			}
@@ -219,7 +230,7 @@ namespace Xamarin.Forms.Platform.iOS
 			return GetCell(CollectionView, indexPath);
 		}
 
-		void RegisterCells()
+		protected virtual void RegisterCells()
 		{
 			CollectionView.RegisterClassForCell(typeof(HorizontalDefaultCell), HorizontalDefaultCell.ReuseId);
 			CollectionView.RegisterClassForCell(typeof(VerticalDefaultCell), VerticalDefaultCell.ReuseId);

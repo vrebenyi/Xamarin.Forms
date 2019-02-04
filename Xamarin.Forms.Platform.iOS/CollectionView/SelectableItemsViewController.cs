@@ -17,10 +17,10 @@ namespace Xamarin.Forms.Platform.iOS
 		{
 			if (!GroupableItemsView.IsGroupingEnabled)
 			{
-				return 1;
+				return 0;
 			}
 
-			return ((IGroupedItemsViewSource)ItemsSource).GroupCount;
+			return ItemsSource.GroupCount;
 		}
 
 		protected override IItemsViewSource CreateItemsViewSource()
@@ -33,19 +33,113 @@ namespace Xamarin.Forms.Platform.iOS
 			return base.CreateItemsViewSource();
 		}
 
-		public override nint GetItemsCount(UICollectionView collectionView, nint section)
+		protected override void RegisterCells()
 		{
-			var totalCount = base.GetItemsCount(collectionView, section);
+			base.RegisterCells();
+			CollectionView.RegisterClassForSupplementaryView(typeof(HorizontalTemplatedHeaderView),
+				UICollectionElementKindSection.Header, HorizontalTemplatedHeaderView.ReuseId);
+			CollectionView.RegisterClassForSupplementaryView(typeof(VerticalTemplatedHeaderView),
+				UICollectionElementKindSection.Header, VerticalTemplatedHeaderView.ReuseId);
+		}
 
-			if (totalCount > 0)
+		public override UICollectionReusableView GetViewForSupplementaryElement(UICollectionView collectionView, 
+			NSString elementKind, NSIndexPath indexPath)
+		{
+			var view = collectionView.DequeueReusableSupplementaryView(elementKind, DetermineViewReuseId(elementKind), indexPath) as UICollectionReusableView;
+
+			switch (view)
 			{
-				return ((IGroupedItemsViewSource)ItemsSource).CountInGroup((int)section);
+				case DefaultCell defaultCell:
+					UpdateDefaultCell(defaultCell, indexPath);
+					break;
+				case TemplatedCell templatedCell:
+					UpdateTemplatedSupplementaryView(templatedCell, elementKind, indexPath);
+					break;
+			}
+
+			// TODO hartez Give the template some data and let it create the actual content
+
+			return view;
+		}
+
+		void UpdateTemplatedSupplementaryView(TemplatedCell cell, NSString elementKind, NSIndexPath indexPath)
+		{
+			ApplyTemplateAndDataContext(cell, elementKind, indexPath);
+
+			if (cell is ItemsViewCell constrainedCell)
+			{
+				ItemsViewLayout.PrepareCellForLayout(constrainedCell);
+			}
+		}
+
+		void ApplyTemplateAndDataContext(TemplatedCell cell, NSString elementKind, NSIndexPath indexPath)
+		{
+			DataTemplate template;
+
+			if (elementKind == UICollectionElementKindSectionKey.Header)
+			{
+				template = GroupableItemsView.HeaderTemplate;
 			}
 			else
 			{
-				return 0;
+				template = null;
 			}
+
+			var templateElement = template.CreateContent() as View;
+			var renderer = CreateRenderer(templateElement);
+
+			BindableObject.SetInheritedBindingContext(renderer.Element, ItemsSource.Group(indexPath));
+			cell.SetRenderer(renderer);
 		}
+
+		string DetermineViewReuseId(NSString elementKind)
+		{
+			if (elementKind == UICollectionElementKindSectionKey.Header)
+			{
+				// if kind is header, check scroll direction and header template
+				return DetermineHeaderViewReuseId();
+
+			}
+
+			return DetermineFooterViewReuseId();
+
+			// ...
+		}
+
+		private string DetermineFooterViewReuseId()
+		{
+			throw new NotImplementedException();
+		}
+
+		string DetermineHeaderViewReuseId()
+		{
+			if (GroupableItemsView.HeaderTemplate != null)
+			{
+				return ItemsViewLayout.ScrollDirection == UICollectionViewScrollDirection.Horizontal
+					? HorizontalTemplatedHeaderView.ReuseId
+					: VerticalTemplatedHeaderView.ReuseId;
+			}
+
+			throw new NotImplementedException();
+
+			//return ItemsViewLayout.ScrollDirection == UICollectionViewScrollDirection.Horizontal
+			//	? HorizontalDefaultCell.ReuseId
+			//	: VerticalDefaultCell.ReuseId;
+		}
+
+		//public override nint GetItemsCount(UICollectionView collectionView, nint section)
+		//{
+		//	var totalCount = base.GetItemsCount(collectionView, section);
+
+		//	if (totalCount > 0)
+		//	{
+		//		return ItemsSource.ItemCountInGroup(section);
+		//	}
+		//	else
+		//	{
+		//		return 0;
+		//	}
+		//}
 	}
 
 	public class SelectableItemsViewController : ItemsViewController
