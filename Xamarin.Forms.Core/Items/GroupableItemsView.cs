@@ -11,22 +11,22 @@
 			set => SetValue(IsGroupingEnabledProperty, value);
 		}
 
-		public static readonly BindableProperty HeaderTemplateProperty =
-			BindableProperty.Create(nameof(HeaderTemplate), typeof(DataTemplate), typeof(GroupableItemsView));
+		public static readonly BindableProperty GroupHeaderTemplateProperty =
+			BindableProperty.Create(nameof(GroupHeaderTemplate), typeof(DataTemplate), typeof(GroupableItemsView));
 
-		public DataTemplate HeaderTemplate
+		public DataTemplate GroupHeaderTemplate
 		{
-			get => (DataTemplate)GetValue(HeaderTemplateProperty);
-			set => SetValue(HeaderTemplateProperty, value);
+			get => (DataTemplate)GetValue(GroupHeaderTemplateProperty);
+			set => SetValue(GroupHeaderTemplateProperty, value);
 		}
 
-		public static readonly BindableProperty FooterTemplateProperty =
-			BindableProperty.Create(nameof(FooterTemplate), typeof(DataTemplate), typeof(GroupableItemsView));
+		public static readonly BindableProperty GroupFooterTemplateProperty =
+			BindableProperty.Create(nameof(GroupFooterTemplate), typeof(DataTemplate), typeof(GroupableItemsView));
 
-		public DataTemplate FooterTemplate
+		public DataTemplate GroupFooterTemplate
 		{
-			get => (DataTemplate)GetValue(FooterTemplateProperty);
-			set => SetValue(FooterTemplateProperty, value);
+			get => (DataTemplate)GetValue(GroupFooterTemplateProperty);
+			set => SetValue(GroupFooterTemplateProperty, value);
 		}
 	}
 }

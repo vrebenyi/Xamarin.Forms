@@ -11,6 +11,8 @@ namespace Xamarin.Forms.Platform.iOS
 		public SelectableItemsViewController(SelectableItemsView selectableItemsView, ItemsViewLayout layout) 
 			: base(selectableItemsView, layout)
 		{
+			// TODO after the Propagation stuff is merged, there should be a second place where this gets set (on layout changes)
+			// Make sure that we're doing the same for GroupableItemsViewController
 			Delegator.SelectableItemsViewController = this;
 		}
 

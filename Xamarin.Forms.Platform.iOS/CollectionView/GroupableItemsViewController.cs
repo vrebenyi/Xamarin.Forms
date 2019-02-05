@@ -12,14 +12,14 @@ namespace Xamarin.Forms.Platform.iOS
 		public GroupableItemsViewController(GroupableItemsView groupableItemsView, ItemsViewLayout layout) 
 			: base(groupableItemsView, layout)
 		{
-			layout.HeaderReferenceSize = new CGSize(1, 1);
+			Delegator.GroupableItemsViewController = this;
 		}
 
 		public override nint NumberOfSections(UICollectionView collectionView)
 		{
 			if (!GroupableItemsView.IsGroupingEnabled)
 			{
-				return 0;
+				return 1;
 			}
 
 			return ItemsSource.GroupCount;
@@ -35,19 +35,33 @@ namespace Xamarin.Forms.Platform.iOS
 			return base.CreateItemsViewSource();
 		}
 
+		// TODO hartez Maybe change this to registerviewtypes or something
 		protected override void RegisterCells()
 		{
 			base.RegisterCells();
-			CollectionView.RegisterClassForSupplementaryView(typeof(HorizontalTemplatedHeaderView),
-				UICollectionElementKindSection.Header, HorizontalTemplatedHeaderView.ReuseId);
-			CollectionView.RegisterClassForSupplementaryView(typeof(VerticalTemplatedHeaderView),
-				UICollectionElementKindSection.Header, VerticalTemplatedHeaderView.ReuseId);
+
+			RegisterSupplementaryViews(UICollectionElementKindSection.Header);
+			RegisterSupplementaryViews(UICollectionElementKindSection.Footer);
+		}
+
+		private void RegisterSupplementaryViews(UICollectionElementKindSection kind)
+		{
+			CollectionView.RegisterClassForSupplementaryView(typeof(HorizontalTemplatedSupplementalView),
+				kind, HorizontalTemplatedSupplementalView.ReuseId);
+			CollectionView.RegisterClassForSupplementaryView(typeof(VerticalTemplatedSupplementalView),
+				kind, VerticalTemplatedSupplementalView.ReuseId);
+			CollectionView.RegisterClassForSupplementaryView(typeof(HorizontalDefaultSupplementalView),
+				kind, HorizontalDefaultSupplementalView.ReuseId);
+			CollectionView.RegisterClassForSupplementaryView(typeof(VerticalDefaultSupplementalView),
+				kind, VerticalDefaultSupplementalView.ReuseId);
 		}
 
 		public override UICollectionReusableView GetViewForSupplementaryElement(UICollectionView collectionView, 
 			NSString elementKind, NSIndexPath indexPath)
 		{
-			var view = collectionView.DequeueReusableSupplementaryView(elementKind, DetermineViewReuseId(elementKind), indexPath) as UICollectionReusableView;
+			var reuseId = DetermineViewReuseId(elementKind);
+
+			var view = collectionView.DequeueReusableSupplementaryView(elementKind, reuseId, indexPath) as UICollectionReusableView;
 
 			switch (view)
 			{
@@ -59,8 +73,6 @@ namespace Xamarin.Forms.Platform.iOS
 					break;
 			}
 
-			// TODO hartez Give the template some data and let it create the actual content
-
 			return view;
 		}
 
@@ -70,7 +82,7 @@ namespace Xamarin.Forms.Platform.iOS
 
 			if (cell is ItemsViewCell constrainedCell)
 			{
-				ItemsViewLayout.PrepareCellForLayout(constrainedCell);
+				cell.ConstrainTo(ItemsViewLayout.ConstrainedDimension);
 			}
 		}
 
@@ -80,11 +92,11 @@ namespace Xamarin.Forms.Platform.iOS
 
 			if (elementKind == UICollectionElementKindSectionKey.Header)
 			{
-				template = GroupableItemsView.HeaderTemplate;
+				template = GroupableItemsView.GroupHeaderTemplate;
 			}
 			else
 			{
-				template = null;
+				template = GroupableItemsView.GroupFooterTemplate;
 			}
 
 			var templateElement = template.CreateContent() as View;
@@ -98,37 +110,46 @@ namespace Xamarin.Forms.Platform.iOS
 		{
 			if (elementKind == UICollectionElementKindSectionKey.Header)
 			{
-				// if kind is header, check scroll direction and header template
-				return DetermineHeaderViewReuseId();
-
+				return DetermineViewReuseId(GroupableItemsView.GroupHeaderTemplate);
 			}
 
-			return DetermineFooterViewReuseId();
-
-			// ...
+			return DetermineViewReuseId(GroupableItemsView.GroupFooterTemplate);
 		}
 
-		private string DetermineFooterViewReuseId()
+		string DetermineViewReuseId(DataTemplate template)
 		{
-			throw new NotImplementedException();
-		}
-
-		string DetermineHeaderViewReuseId()
-		{
-			if (GroupableItemsView.HeaderTemplate != null)
+			if (template == null)
 			{
+				// No template, fall back the the default supplemental views
 				return ItemsViewLayout.ScrollDirection == UICollectionViewScrollDirection.Horizontal
-					? HorizontalTemplatedHeaderView.ReuseId
-					: VerticalTemplatedHeaderView.ReuseId;
+					? HorizontalDefaultSupplementalView.ReuseId
+					: VerticalDefaultSupplementalView.ReuseId;
 			}
 
-			throw new NotImplementedException();
-
-			//return ItemsViewLayout.ScrollDirection == UICollectionViewScrollDirection.Horizontal
-			//	? HorizontalDefaultCell.ReuseId
-			//	: VerticalDefaultCell.ReuseId;
+			return ItemsViewLayout.ScrollDirection == UICollectionViewScrollDirection.Horizontal
+				? HorizontalTemplatedSupplementalView.ReuseId
+				: VerticalTemplatedSupplementalView.ReuseId;
 		}
 
-		
+		// TODO hartez These next two methods can turn headers/footers on/off by returning CGSize.Empty; need to be checking
+		// IsGroupingEnabled here to do that
+
+		internal CGSize GetReferenceSizeForHeader(UICollectionView collectionView, UICollectionViewLayout layout, nint section)
+		{
+			// TODO hartez This will fully measure every header, but possibly twice, which is not amazing for performance
+			// Verify that this is a double measure, and if so see if we can find a way around it
+			// Long-term, we might be looking at more performance hints for headers/footers (if the dev knows for sure they'll 
+			// all the be the same size)
+			var cell = GetViewForSupplementaryElement(collectionView, UICollectionElementKindSectionKey.Header, NSIndexPath.FromItemSection(0, section)) as ItemsViewCell;
+
+			return cell.Measure();
+		}
+
+		internal CGSize GetReferenceSizeForFooter(UICollectionView collectionView, UICollectionViewLayout layout, nint section)
+		{
+			var cell = GetViewForSupplementaryElement(collectionView, UICollectionElementKindSectionKey.Footer, NSIndexPath.FromItemSection(0, section)) as ItemsViewCell;
+
+			return cell.Measure();
+		}
 	}
 }

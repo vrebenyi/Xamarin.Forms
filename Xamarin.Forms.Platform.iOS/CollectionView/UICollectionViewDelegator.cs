@@ -1,4 +1,5 @@
 ﻿using System;
+using CoreGraphics;
 using Foundation;
 using UIKit;
 
@@ -8,6 +9,7 @@ namespace Xamarin.Forms.Platform.iOS
 	{
 		public ItemsViewLayout ItemsViewLayout { get; private set; }
 		public SelectableItemsViewController SelectableItemsViewController { get; set; }
+		public GroupableItemsViewController GroupableItemsViewController { get; set; }
 
 		public UICollectionViewDelegator(ItemsViewLayout itemsViewLayout) => ItemsViewLayout = itemsViewLayout;
 
@@ -57,6 +59,26 @@ namespace Xamarin.Forms.Platform.iOS
 		public override void ItemDeselected(UICollectionView collectionView, NSIndexPath indexPath)
 		{
 			SelectableItemsViewController?.ItemDeselected(collectionView, indexPath);
+		}
+
+		public override CGSize GetReferenceSizeForHeader(UICollectionView collectionView, UICollectionViewLayout layout, nint section)
+		{
+			if (GroupableItemsViewController == null)
+			{
+				return CGSize.Empty;
+			}
+
+			return GroupableItemsViewController.GetReferenceSizeForHeader(collectionView, layout, section);
+		}
+
+		public override CGSize GetReferenceSizeForFooter(UICollectionView collectionView, UICollectionViewLayout layout, nint section)
+		{
+			if (GroupableItemsViewController == null)
+			{
+				return CGSize.Empty;
+			}
+
+			return GroupableItemsViewController.GetReferenceSizeForFooter(collectionView, layout, section);
 		}
 	}
 }

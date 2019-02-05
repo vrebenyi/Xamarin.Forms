@@ -11,17 +11,17 @@
 				</DataTemplate>
 			</CollectionView.ItemTemplate>
 			
-			<CollectionView.HeaderTemplate>
+			<CollectionView.GroupHeaderTemplate>
 				<DataTemplate>
 					<Label Text="{Binding Name}" BackgroundColor="LightGreen"/>
 				</DataTemplate>
-			</CollectionView.HeaderTemplate>
+			</CollectionView.GroupHeaderTemplate>
 			
-			<CollectionView.FooterTemplate>
+			<CollectionView.GroupFooterTemplate>
 				<DataTemplate>
 					<Label Text="Copyright 2019" BackgroundColor="Orange"/>
 				</DataTemplate>
-			</CollectionView.FooterTemplate>
+			</CollectionView.GroupFooterTemplate>
 			
 		</CollectionView>
 	</ContentPage.Content>
