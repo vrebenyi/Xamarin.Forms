@@ -161,7 +161,20 @@ namespace Xamarin.Forms.Platform.iOS
 			_groupSource = groupSource;
 		}
 
-		public object this[NSIndexPath indexPath] => ((IList)_groupSource[indexPath.Section])[indexPath.Row];
+		public object this[NSIndexPath indexPath]
+		{
+			get
+			{
+				var group = (IList)_groupSource[indexPath.Section];
+
+				if (group.Count == 0)
+				{
+					return null;
+				}
+
+				return group[indexPath.Row];
+			}
+		}
 
 		public int GroupCount => _groupSource.Count;
 
