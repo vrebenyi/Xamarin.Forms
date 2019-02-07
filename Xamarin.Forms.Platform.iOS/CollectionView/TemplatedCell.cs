@@ -70,7 +70,6 @@ namespace Xamarin.Forms.Platform.iOS
 			}
 		}
 
-		// TODO hartez Split this into another level, the header/foot views shouldn't be selectable
 		public override bool Selected
 		{
 			get => base.Selected;

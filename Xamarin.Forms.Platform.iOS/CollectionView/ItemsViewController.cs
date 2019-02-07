@@ -158,19 +158,7 @@ namespace Xamarin.Forms.Platform.iOS
 
 		public virtual NSIndexPath GetIndexForItem(object item)
 		{
-			// TODO hartez think about putting a method on IItemsViewSource for this 
-			// Needs to take a section, also could be a more efficient local implementation
-			// on the simple list versions if we don't have to create a ton of NSIndexPaths
-
-			for (int n = 0; n < ItemsSource.ItemCountInGroup(0); n++)
-			{
-				if (ItemsSource[NSIndexPath.Create(0, n)] == item)
-				{
-					return NSIndexPath.Create(0, n);
-				}
-			}
-
-			return NSIndexPath.Create(-1, -1);
+			return ItemsSource.GetIndexForItem(item);
 		}
 
 		protected object GetItemAtIndex(NSIndexPath index)

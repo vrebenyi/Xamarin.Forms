@@ -12,6 +12,11 @@ namespace Xamarin.Forms.Controls.GalleryPages.CollectionViewGalleries.GroupingGa
 		}
 
 		public string Name { get; set; }
+
+		public override string ToString()
+		{
+			return Name;
+		}
 	}
 
 	[Preserve(AllMembers = true)]
@@ -20,6 +25,11 @@ namespace Xamarin.Forms.Controls.GalleryPages.CollectionViewGalleries.GroupingGa
 		public Member(string name) => Name = name;
 
 		public string Name { get; set; }
+
+		public override string ToString()
+		{
+			return Name;
+		}
 	}
 
 	class SuperTeams : List<Team>

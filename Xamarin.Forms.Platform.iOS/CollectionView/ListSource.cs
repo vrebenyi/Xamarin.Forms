@@ -41,6 +41,19 @@ namespace Xamarin.Forms.Platform.iOS
 
 		public int ItemCount => Count;
 
+		public NSIndexPath GetIndexForItem(object item)
+		{
+			for (int n = 0; n < Count; n++)
+			{
+				if (this[n] == item)
+				{
+					return NSIndexPath.Create(0, n);
+				}
+			}
+
+			return NSIndexPath.Create(-1, -1);
+		}
+
 		public object Group(NSIndexPath indexPath)
 		{
 			return null;

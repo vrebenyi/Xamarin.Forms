@@ -14,11 +14,11 @@ namespace Xamarin.Forms.Controls.GalleryPages.CollectionViewGalleries.GroupingGa
 	[Preserve (AllMembers = true)]
 	public partial class BasicGrouping : ContentPage
 	{
-		
-		
 		// TODO Also need a gallery where we can turn grouping on/off to make sure that doesn't blow up
 
-		// TODO Also need a gallery with no templates, so it falls back to the default cell stuff (make sure the font looks right)
+		// TODO Need a gallery with selection enabled, to verify that headers/footers aren't selectable
+
+// TODO ezhart and a gallery that allows moving items and has grouping (groupable observable items sources)
 
 		public BasicGrouping ()
 		{

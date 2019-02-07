@@ -130,6 +130,19 @@ namespace Xamarin.Forms.Platform.iOS
 			return null;
 		}
 
+		public NSIndexPath GetIndexForItem(object item)
+		{
+			for (int n = 0; n < _itemsSource.Count; n++)
+			{
+				if (this[n] == item)
+				{
+					return NSIndexPath.Create(0, n);
+				}
+			}
+
+			return NSIndexPath.Create(-1, -1);
+		}
+
 		public int GroupCount => 1;
 
 		public int ItemCount => _itemsSource.Count;
@@ -193,6 +206,24 @@ namespace Xamarin.Forms.Platform.iOS
 
 				return total;
 			}
+		}
+
+		public NSIndexPath GetIndexForItem(object item)
+		{
+			for (int i = 0; i < _groupSource.Count; i++)
+			{
+				var group = (IList)_groupSource[i];
+
+				for (int j = 0; j < group.Count; j++)
+				{
+					if (group[j] == item)
+					{
+						return NSIndexPath.Create(i, j);
+					}
+				}
+			}
+
+			return NSIndexPath.Create(-1, -1);
 		}
 
 		public object Group(NSIndexPath indexPath)

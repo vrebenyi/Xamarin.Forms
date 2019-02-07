@@ -24,6 +24,10 @@ namespace Xamarin.Forms.Controls.GalleryPages.CollectionViewGalleries.GroupingGa
 							new BasicGrouping(), Navigation),
 						GalleryBuilder.NavButton("Grouping, some empty groups", () =>
 							new SomeEmptyGroups(), Navigation),
+						GalleryBuilder.NavButton("Grouping, no templates", () =>
+							new GroupingNoTemplates(), Navigation),
+						GalleryBuilder.NavButton("Grouping, with selection", () =>
+							new GroupingPlusSelection(), Navigation),
 					}
 				}
 			};

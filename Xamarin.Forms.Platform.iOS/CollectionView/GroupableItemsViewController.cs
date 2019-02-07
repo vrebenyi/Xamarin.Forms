@@ -66,7 +66,7 @@ namespace Xamarin.Forms.Platform.iOS
 			switch (view)
 			{
 				case DefaultCell defaultCell:
-					UpdateDefaultCell(defaultCell, indexPath);
+					UpdateDefaultSupplementaryView(defaultCell, elementKind, indexPath);
 					break;
 				case TemplatedCell templatedCell:
 					UpdateTemplatedSupplementaryView(templatedCell, elementKind, indexPath);
@@ -74,6 +74,16 @@ namespace Xamarin.Forms.Platform.iOS
 			}
 
 			return view;
+		}
+
+		void UpdateDefaultSupplementaryView(DefaultCell cell, NSString elementKind, NSIndexPath indexPath)
+		{
+			cell.Label.Text = ItemsSource.Group(indexPath).ToString();
+
+			if (cell is ItemsViewCell constrainedCell)
+			{
+				cell.ConstrainTo(ItemsViewLayout.ConstrainedDimension);
+			}
 		}
 
 		void UpdateTemplatedSupplementaryView(TemplatedCell cell, NSString elementKind, NSIndexPath indexPath)
