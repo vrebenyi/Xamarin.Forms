@@ -16,8 +16,6 @@ namespace Xamarin.Forms.Controls.GalleryPages.CollectionViewGalleries.GroupingGa
 	{
 		// TODO Also need a gallery where we can turn grouping on/off to make sure that doesn't blow up
 
-		// TODO Need a gallery with selection enabled, to verify that headers/footers aren't selectable
-
 // TODO ezhart and a gallery that allows moving items and has grouping (groupable observable items sources)
 
 		public BasicGrouping ()
