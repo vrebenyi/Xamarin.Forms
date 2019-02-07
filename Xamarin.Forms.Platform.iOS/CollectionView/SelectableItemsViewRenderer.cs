@@ -12,6 +12,16 @@ namespace Xamarin.Forms.Platform.iOS
 		{
 			return new GroupableItemsViewController(itemsView as GroupableItemsView, layout);
 		}
+
+		protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs changedProperty)
+		{
+			base.OnElementPropertyChanged(sender, changedProperty);
+
+			if (changedProperty.Is(GroupableItemsView.IsGroupingEnabledProperty))
+			{
+				GroupableItemsViewController?.UpdateItemsSource();
+			}
+		}
 	}
 
 	public class SelectableItemsViewRenderer : ItemsViewRenderer

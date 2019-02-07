@@ -5,24 +5,18 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Xamarin.Forms;
-using Xamarin.Forms.Internals;
 using Xamarin.Forms.Xaml;
 
 namespace Xamarin.Forms.Controls.GalleryPages.CollectionViewGalleries.GroupingGalleries
 {
 	[XamlCompilation(XamlCompilationOptions.Compile)]
-	[Preserve (AllMembers = true)]
-	public partial class BasicGrouping : ContentPage
+	public partial class SwitchGrouping : ContentPage
 	{
-		// TODO ezhart and a gallery that allows moving items and has grouping (groupable observable items sources)
-
-		public BasicGrouping ()
+		public SwitchGrouping()
 		{
-			InitializeComponent ();
+			InitializeComponent();
 
 			CollectionView.ItemsSource = new SuperTeams();
-
-			CollectionView.IsGroupingEnabled = true;
 		}
 	}
 }

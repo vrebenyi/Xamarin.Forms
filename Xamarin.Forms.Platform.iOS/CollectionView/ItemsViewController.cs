@@ -43,14 +43,13 @@ namespace Xamarin.Forms.Platform.iOS
 			};
 
 			CollectionView.Delegate = Delegator;
-
 			if (CollectionView.CollectionViewLayout != ItemsViewLayout)
 			{
 				// We're updating from a previous layout
 
 				// Make sure the new layout is sized properly
 				ItemsViewLayout.ConstrainTo(CollectionView.Bounds.Size);
-				
+			
 				
 				// Reload the data so the currently visible cells get laid out according to the new layout
 				CollectionView.ReloadData();
@@ -123,10 +122,7 @@ namespace Xamarin.Forms.Platform.iOS
 
 		protected virtual IItemsViewSource CreateItemsViewSource()
 		{
-			var x = ItemsView.ItemsSource;
-
-
-			return ItemsSourceFactory.Create(x, CollectionView);
+			return ItemsSourceFactory.Create(ItemsView.ItemsSource, CollectionView);
 		}
 
 		public virtual void UpdateItemsSource()
