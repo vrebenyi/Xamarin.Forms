@@ -10,7 +10,6 @@ namespace Xamarin.Forms.Platform.iOS
 		[Export("initWithFrame:")]
 		public VerticalTemplatedSupplementalView(CGRect frame) : base(frame)
 		{
-			System.Diagnostics.Debug.WriteLine(">>>>> VerticalTemplatedSupplementalView");
 		}
 
 		public override CGSize Measure()

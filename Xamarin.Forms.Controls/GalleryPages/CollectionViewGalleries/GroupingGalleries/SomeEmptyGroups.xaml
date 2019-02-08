@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Xamarin.Forms.Controls.GalleryPages.CollectionViewGalleries.GroupingGalleries.SomeEmptyGroups">
     <ContentPage.Content>
-		<CollectionView x:Name="CollectionView" ItemsLayout="ListItemsLayout.VerticalList" ItemSizingStrategy="MeasureFirstItem">
+		<CollectionView x:Name="CollectionView" ItemSizingStrategy="MeasureFirstItem">
 
 			<CollectionView.ItemTemplate>
 				<DataTemplate>
@@ -24,7 +24,7 @@
 			<CollectionView.GroupFooterTemplate>
 				<DataTemplate>
 					<StackLayout>
-						<Label Text="{Binding Count, StringFormat='Total members: {0:D}'}" BackgroundColor="Orange" 
+						<Label Text="{Binding Count, StringFormat='{}Total members: {0:D}'}" BackgroundColor="Orange" 
 							   Margin="0,0,0,15"/>
 					</StackLayout>
 				</DataTemplate>

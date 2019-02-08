@@ -21,8 +21,6 @@ namespace Xamarin.Forms.Controls.GalleryPages.CollectionViewGalleries.GroupingGa
 			InitializeComponent ();
 
 			CollectionView.ItemsSource = new SuperTeams();
-
-			CollectionView.IsGroupingEnabled = true;
 		}
 	}
 }
