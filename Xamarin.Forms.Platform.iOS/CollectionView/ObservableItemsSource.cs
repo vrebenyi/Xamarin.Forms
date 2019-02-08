@@ -159,8 +159,6 @@ namespace Xamarin.Forms.Platform.iOS
 				return this[indexPath.Row];
 			}
 		}
-
-		public object this[int index] => _itemsSource[index];
 	}
 
 	internal class BasicGroupedSource : IItemsViewSource

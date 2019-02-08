@@ -20,12 +20,12 @@ namespace Xamarin.Forms.Platform.iOS
 
 		public ItemsView ItemsView { get; }
 
-		protected ItemsViewLayout ItemsViewLayout { get; }
+		protected ItemsViewLayout ItemsViewLayout { get; set; }
 
 		public ItemsViewController(ItemsView itemsView, ItemsViewLayout layout) : base(layout)
 		{
 			ItemsView = itemsView;
-			ItemsSource = ItemsSourceFactory.Create(_itemsView.ItemsSource, CollectionView);
+			ItemsSource = CreateItemsViewSource();
 
 			UpdateLayout(layout);
 		}

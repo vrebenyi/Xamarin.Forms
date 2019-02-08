@@ -146,6 +146,11 @@ namespace Xamarin.Forms.Platform.iOS
 
 		internal CGSize GetReferenceSizeForHeader(UICollectionView collectionView, UICollectionViewLayout layout, nint section)
 		{
+			if (!GroupableItemsView.IsGroupingEnabled)
+			{
+				return CGSize.Empty;
+			}
+
 			// TODO hartez This will fully measure every header, but possibly twice, which is not amazing for performance
 			// Verify that this is a double measure, and if so see if we can find a way around it
 			// Long-term, we might be looking at more performance hints for headers/footers (if the dev knows for sure they'll 
@@ -157,6 +162,13 @@ namespace Xamarin.Forms.Platform.iOS
 
 		internal CGSize GetReferenceSizeForFooter(UICollectionView collectionView, UICollectionViewLayout layout, nint section)
 		{
+			// TODO ezhart Instead of hitting the BP every time, we should cache _isGrouped locally
+			// Should be easy to do from the GroupableItemsViewRenderer property changed handler
+			if (!GroupableItemsView.IsGroupingEnabled)
+			{
+				return CGSize.Empty;
+			}
+
 			var cell = GetViewForSupplementaryElement(collectionView, UICollectionElementKindSectionKey.Footer, NSIndexPath.FromItemSection(0, section)) as ItemsViewCell;
 
 			return cell.Measure();
