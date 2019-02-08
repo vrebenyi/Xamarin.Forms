@@ -204,15 +204,28 @@ namespace Xamarin.Forms.Platform.iOS
 
 		UICollectionViewCell GetPrototype()
 		{
-			// TODO hartez see TOOD below
-
 			if (ItemsSource.ItemCount == 0)
 			{
 				return null;
 			}
 
-			// TODO hartez assuming this works, we'll need to evaluate using this nsindexpath (what about groups?)
-			var indexPath = NSIndexPath.Create(0, 0);
+			var group = 0;
+
+			if (ItemsSource.GroupCount > 1)
+			{
+				// If we're in a grouping situation, then we need to make sure we find an actual data item
+				// to use for our prototype cell. It's possible that we have empty groups.
+				for (int n = 0; n < ItemsSource.GroupCount; n++)
+				{
+					if (ItemsSource.ItemCountInGroup(n) > 0)
+					{
+						group = n;
+						break;
+					}
+				}	
+			}
+
+			var indexPath = NSIndexPath.Create(group, 0);
 			return GetCell(CollectionView, indexPath);
 		}
 
