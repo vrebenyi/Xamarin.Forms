@@ -24,3 +24,4 @@ using Xamarin.Forms;
 [assembly: ExportRenderer(typeof(Xamarin.Forms.TimePicker), typeof(Xamarin.Forms.Platform.iOS.Material.MaterialTimePickerRenderer), new[] { typeof(VisualRendererMarker.Material) })]
 [assembly: ExportRenderer(typeof(Xamarin.Forms.Picker), typeof(Xamarin.Forms.Platform.iOS.Material.MaterialPickerRenderer), new[] { typeof(VisualRendererMarker.Material) })]
 [assembly: ExportRenderer(typeof(Xamarin.Forms.DatePicker), typeof(Xamarin.Forms.Platform.iOS.Material.MaterialDatePickerRenderer), new[] { typeof(VisualRendererMarker.Material) })]
+[assembly: ExportRenderer(typeof(Xamarin.Forms.Editor), typeof(Xamarin.Forms.Platform.iOS.Material.MaterialEditorRenderer), new[] { typeof(VisualRendererMarker.Material) })]

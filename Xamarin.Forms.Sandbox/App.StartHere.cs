@@ -9,21 +9,14 @@ namespace Xamarin.Forms.Sandbox
 		// This code is called from the App Constructor so just initialize the main page of the application here
 		void InitializeMainPage()
 		{
-			MainPage = new ContentPage()
-			{
-				Content = CreateStackLayout(
-					new[] {
-						new Editor()
-						{
-							Visual = VisualMarker.Material,
-							VerticalOptions = LayoutOptions.FillAndExpand
-						},
-						new Editor()
-						{
-							VerticalOptions = LayoutOptions.FillAndExpand
-						}
-					})
-			};
+			MainPage = CreateStackLayoutPage(new[] { new Editor() {
+				Visual = VisualMarker.Material,
+				VerticalOptions = LayoutOptions.FillAndExpand,
+				AutoSize = EditorAutoSizeOption.TextChanges,
+				PlaceholderColor = Color.Green,
+				TextColor = Color.Purple,
+				Placeholder = "Wuttup "
+			} });
 		}
 	}
 }
