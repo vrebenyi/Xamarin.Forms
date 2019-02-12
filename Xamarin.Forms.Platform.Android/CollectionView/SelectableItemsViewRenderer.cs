@@ -18,7 +18,7 @@ namespace Xamarin.Forms.Platform.Android
 		{
 			base.OnElementPropertyChanged(sender, changedProperty);
 			
-			if (changedProperty.Is(SelectableItemsView.SelectedItemProperty))
+			if (changedProperty.IsOneOf(SelectableItemsView.SelectedItemProperty, SelectableItemsView.SelectedItemsProperty))
 			{
 				UpdateNativeSelection();
 			}
@@ -57,6 +57,11 @@ namespace Xamarin.Forms.Platform.Android
 
 		void MarkItemSelected(object selectedItem)
 		{
+			if(selectedItem == null)
+			{
+				return;
+			}
+
 			var position = ItemsViewAdapter.GetPositionForItem(selectedItem);
 			var selectedHolder = FindViewHolderForAdapterPosition(position);
 			if (selectedHolder == null)
@@ -73,26 +78,30 @@ namespace Xamarin.Forms.Platform.Android
 		void UpdateNativeSelection()
 		{
 			var mode = SelectableItemsView.SelectionMode;
-			var selectedItem = SelectableItemsView.SelectedItem;
 
-			if (selectedItem == null)
+			if(mode == SelectionMode.None)
 			{
-				if (mode == SelectionMode.None || mode == SelectionMode.Single)
-				{
-					ClearSelection();
-				}
-
-				// If the mode is Multiple and SelectedItem is set to null, don't do anything
+				ClearSelection();
 				return;
 			}
 
-			if (mode != SelectionMode.Multiple)
+			if(mode == SelectionMode.Single)
 			{
+				var selectedItem = SelectableItemsView.SelectedItem;
+
 				ClearSelection();
 				MarkItemSelected(selectedItem);
+				return;
 			}
 
-			// TODO hartez 2018/11/06 22:32:07 This doesn't cover all the possible cases yet; need to handle multiple selection	
+			var selectedItems = SelectableItemsView.SelectedItems;
+
+			ClearSelection();
+
+			foreach(var item in selectedItems)
+			{
+				MarkItemSelected(item);
+			}
 		}
 	}
 }

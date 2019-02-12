@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Android.Content;
 using Android.Support.V7.Widget;
 using Object = Java.Lang.Object;
@@ -69,8 +70,29 @@ namespace Xamarin.Forms.Platform.Android
 					SelectableItemsView.SelectedItem = ItemsSource[adapterPosition];
 					return;
 				case SelectionMode.Multiple:
-					// TODO hartez 2018/11/06 22:22:42 Once SelectedItems is available, toggle ItemsSource[adapterPosition] here	
+
+					var currentSelection = new List<object>();
+
+					foreach(var selectedItem in SelectableItemsView.SelectedItems)
+					{
+						currentSelection.Add(selectedItem);
+					}
+
+					var item = ItemsSource[adapterPosition];
+
+					if(currentSelection.Contains(item))
+					{
+						currentSelection.Remove(item);
+					}
+					else
+					{
+						currentSelection.Add(item);
+					}
+
+					SelectableItemsView.SelectedItems = currentSelection;
+					
 					return;
+
 				default:
 					throw new ArgumentOutOfRangeException();
 			}

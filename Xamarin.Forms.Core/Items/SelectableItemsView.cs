@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows.Input;
 
 namespace Xamarin.Forms
@@ -13,6 +14,10 @@ namespace Xamarin.Forms
 			BindableProperty.Create(nameof(SelectedItem), typeof(object), typeof(SelectableItemsView), default(object),
 				propertyChanged: SelectedItemPropertyChanged);
 
+		public static readonly BindableProperty SelectedItemsProperty =
+			BindableProperty.Create(nameof(SelectedItems), typeof(List<object>), typeof(SelectableItemsView), new List<object>(),
+				propertyChanged: SelectedItemsPropertyChanged);
+
 		public static readonly BindableProperty SelectionChangedCommandProperty =
 			BindableProperty.Create(nameof(SelectionChangedCommand), typeof(ICommand), typeof(SelectableItemsView));
 
@@ -24,6 +29,12 @@ namespace Xamarin.Forms
 		{
 			get => GetValue(SelectedItemProperty);
 			set => SetValue(SelectedItemProperty, value);
+		}
+
+		public List<object> SelectedItems
+		{
+			get => (List<object>)GetValue(SelectedItemsProperty);
+			set => SetValue(SelectedItemsProperty, value);
 		}
 
 		public ICommand SelectionChangedCommand
@@ -50,12 +61,8 @@ namespace Xamarin.Forms
 		{
 		}
 
-		static void SelectedItemPropertyChanged(BindableObject bindable, object oldValue, object newValue)
+		static void SelectionPropertyChanged(SelectableItemsView selectableItemsView, SelectionChangedEventArgs args)
 		{
-			var selectableItemsView = (SelectableItemsView)bindable;
-
-			var args = new SelectionChangedEventArgs(oldValue, newValue);
-
 			var command = selectableItemsView.SelectionChangedCommand;
 
 			if (command != null)
@@ -71,6 +78,27 @@ namespace Xamarin.Forms
 			selectableItemsView.SelectionChanged?.Invoke(selectableItemsView, args);
 
 			selectableItemsView.OnSelectionChanged(args);
+		}
+
+		static void SelectedItemPropertyChanged(BindableObject bindable, object oldValue, object newValue)
+		{
+			var selectableItemsView = (SelectableItemsView)bindable;
+
+			var args = new SelectionChangedEventArgs(oldValue, newValue);
+
+			SelectionPropertyChanged(selectableItemsView, args);
+		}
+
+		private static void SelectedItemsPropertyChanged(BindableObject bindable, object oldValue, object newValue)
+		{
+			var selectableItemsView = (SelectableItemsView)bindable;
+
+			var oldList = (List<object>)oldValue;
+			var newList = (List<object>)newValue;
+
+			var args = new SelectionChangedEventArgs(oldList, newList);
+
+			SelectionPropertyChanged(selectableItemsView, args);
 		}
 	}
 }
