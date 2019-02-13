@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Foundation;
 using UIKit;
 
@@ -47,23 +48,34 @@ namespace Xamarin.Forms.Platform.iOS
 		void UpdateFormsSelection()
 		{
 			var mode = SelectableItemsView.SelectionMode;
+			var selectedItems = SelectableItemsView.SelectedItems;
+			var paths = CollectionView.GetIndexPathsForSelectedItems();
+			//selectedItems.Clear();
 
 			switch (mode)
 			{
 				case SelectionMode.None:
-					SelectableItemsView.SelectedItem = null;
-					// TODO hartez Clear SelectedItems
+					//SelectableItemsView.SelectedItem = null;
 					return;
 				case SelectionMode.Single:
-					var paths = CollectionView.GetIndexPathsForSelectedItems();
 					if (paths.Length > 0)
 					{
 						SelectableItemsView.SelectedItem = GetItemAtIndex(paths[0]);
 					}
-					// TODO hartez Clear SelectedItems
 					return;
 				case SelectionMode.Multiple:
-					// TODO hartez Handle setting SelectedItems to all the items at the selected paths	
+					
+					var currentSelection = new List<object>();
+
+					for (int n = 0; n < paths.Length; n++)
+					{
+						var path = paths[n];
+						var item = GetItemAtIndex(paths[n]);
+						currentSelection.Add(item);
+					}
+
+					SelectableItemsView.SelectedItems = currentSelection;
+
 					return;
 				default:
 					throw new ArgumentOutOfRangeException();
@@ -73,6 +85,7 @@ namespace Xamarin.Forms.Platform.iOS
 		internal void UpdateSelectionMode()
 		{
 			var mode = SelectableItemsView.SelectionMode;
+			var oldNativeSelection = CollectionView.GetIndexPathsForSelectedItems();
 
 			switch (mode)
 			{
@@ -81,8 +94,16 @@ namespace Xamarin.Forms.Platform.iOS
 					CollectionView.AllowsMultipleSelection = false;
 					break;
 				case SelectionMode.Single:
+
+					//System.Diagnostics.Debug.WriteLine($">>>>> Before");
+					//DebugPaths();
+
 					CollectionView.AllowsSelection = true;
 					CollectionView.AllowsMultipleSelection = false;
+
+					//System.Diagnostics.Debug.WriteLine($">>>>> After");
+					//DebugPaths();
+
 					break;
 				case SelectionMode.Multiple:
 					CollectionView.AllowsSelection = true;
@@ -90,7 +111,45 @@ namespace Xamarin.Forms.Platform.iOS
 					break;
 			}
 
+			var newNativeSelection = CollectionView.GetIndexPathsForSelectedItems();
+
+			if (SelectedPathsEqual(oldNativeSelection, newNativeSelection))
+			{
+				// Changing the mode hasn't changed the selection at all, so no need to update the Forms selection
+				return;
+			}
+
 			UpdateFormsSelection();
 		}
+
+		bool SelectedPathsEqual(NSIndexPath[] previous, NSIndexPath[] current)
+		{
+			if (current.Length != previous.Length)
+			{
+				return false;
+			}
+
+			for (int n = 0; n < current.Length; n++)
+			{
+				if (current[n] != previous[n])
+				{
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		//void DebugPaths()
+		//{
+		//	var paths = CollectionView.GetIndexPathsForSelectedItems();
+
+		//	for (int n = 0; n < paths.Length; n++)
+		//	{
+		//		var path = paths[n];
+		//		var item = GetItemAtIndex(paths[n]);
+		//		System.Diagnostics.Debug.WriteLine($">>>>> {n}: row is {path.Row}, description is {path.Description}, item is {item.ToString()} ");
+		//	}
+		//}
 	}
 }
