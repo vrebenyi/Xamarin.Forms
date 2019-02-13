@@ -116,7 +116,7 @@ namespace Xamarin.Forms.Platform.Android
 			UpdateAnchorX();
 			UpdateAnchorY();
 
-			MaybeRequestLayout();
+			MaybeRequestLayout(false);
 		}
 
 		void HandlePropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -134,8 +134,7 @@ namespace Xamarin.Forms.Platform.Android
 
 			if (_renderer.Element.Batched)
 			{
-				if (e.PropertyName == VisualElement.XProperty.PropertyName || e.PropertyName == VisualElement.YProperty.PropertyName || e.PropertyName == VisualElement.WidthProperty.PropertyName ||
-					e.PropertyName == VisualElement.HeightProperty.PropertyName)
+				if (e.IsOneOf(VisualElement.XProperty, VisualElement.YProperty, VisualElement.WidthProperty, VisualElement.HeightProperty, Platform.RendererProperty))
 					_layoutNeeded = true;
 				else if (e.PropertyName == VisualElement.AnchorXProperty.PropertyName || e.PropertyName == VisualElement.AnchorYProperty.PropertyName || e.PropertyName == VisualElement.ScaleProperty.PropertyName || e.PropertyName == VisualElement.ScaleXProperty.PropertyName || e.PropertyName == VisualElement.ScaleYProperty.PropertyName ||
 						 e.PropertyName == VisualElement.RotationProperty.PropertyName || e.PropertyName == VisualElement.RotationXProperty.PropertyName || e.PropertyName == VisualElement.RotationYProperty.PropertyName ||
@@ -148,9 +147,8 @@ namespace Xamarin.Forms.Platform.Android
 				return;
 			}
 
-			if (e.PropertyName == VisualElement.XProperty.PropertyName || e.PropertyName == VisualElement.YProperty.PropertyName || e.PropertyName == VisualElement.WidthProperty.PropertyName ||
-				e.PropertyName == VisualElement.HeightProperty.PropertyName)
-				MaybeRequestLayout();
+			if (e.IsOneOf(VisualElement.XProperty, VisualElement.YProperty, VisualElement.WidthProperty, VisualElement.HeightProperty, Platform.RendererProperty))
+				MaybeRequestLayout(true);
 			else if (e.PropertyName == VisualElement.AnchorXProperty.PropertyName)
 				UpdateAnchorX();
 			else if (e.PropertyName == VisualElement.AnchorYProperty.PropertyName)
@@ -184,7 +182,7 @@ namespace Xamarin.Forms.Platform.Android
 			_batchedProperties.Clear();
 
 			if (_layoutNeeded)
-				MaybeRequestLayout();
+				MaybeRequestLayout(true);
 			_layoutNeeded = false;
 		}
 
@@ -199,13 +197,9 @@ namespace Xamarin.Forms.Platform.Android
 			UpdateClipToBounds();
 		}
 
-		void MaybeRequestLayout()
+		void MaybeRequestLayout(bool forceRequest)
 		{
-			var isInLayout = false;
-			if ((int)Build.VERSION.SdkInt >= 18)
-				isInLayout = _renderer.View.IsInLayout;
-
-			if (!isInLayout && !_renderer.View.IsLayoutRequested)
+			if (!_renderer.View.IsInLayout && (forceRequest || !_renderer.View.IsLayoutRequested))
 				_renderer.View.RequestLayout();
 		}
 
