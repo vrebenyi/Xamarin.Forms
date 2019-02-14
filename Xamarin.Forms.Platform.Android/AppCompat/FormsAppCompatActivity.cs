@@ -19,6 +19,7 @@ using AColor = Android.Graphics.Color;
 using ARelativeLayout = Android.Widget.RelativeLayout;
 using Xamarin.Forms.Internals;
 using System.Threading.Tasks;
+using Xamarin.Forms.Internal;
 
 #endregion
 
@@ -84,6 +85,7 @@ namespace Xamarin.Forms.Platform.Android
 
 		protected void LoadApplication(Application application)
 		{
+			Profile.Push();
 			if(!_activityCreated)
 			{
 			    throw new InvalidOperationException("Activity OnCreate was not called prior to loading the application. Did you forget a base.OnCreate call?");
@@ -135,7 +137,10 @@ namespace Xamarin.Forms.Platform.Android
 				}
 			}
 
+			Profile.PopPush(nameof(SetMainPage));
 			SetMainPage();
+
+			Profile.Pop();
 		}
 
 		protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)

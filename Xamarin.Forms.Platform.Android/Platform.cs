@@ -18,6 +18,7 @@ using Xamarin.Forms.Platform.Android.AppCompat;
 using FragmentManager = Android.Support.V4.App.FragmentManager;
 using Xamarin.Forms.Internals;
 using AView = Android.Views.View;
+using Xamarin.Forms.Internal;
 
 namespace Xamarin.Forms.Platform.Android
 {
@@ -324,9 +325,12 @@ namespace Xamarin.Forms.Platform.Android
 
 		internal static IVisualElementRenderer CreateRenderer(VisualElement element, Context context)
 		{
+			Profile.Push(nameof(CreateRenderer));
 			IVisualElementRenderer renderer = Registrar.Registered.GetHandlerForObject<IVisualElementRenderer>(element, context)
 				?? new DefaultRenderer(context);
+			Profile.PopPush(element.GetType().Name);
 			renderer.SetElement(element);
+			Profile.Pop();
 
 			return renderer;
 		}
