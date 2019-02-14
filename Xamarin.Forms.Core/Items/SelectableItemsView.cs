@@ -1,9 +1,114 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Windows.Input;
 
 namespace Xamarin.Forms
 {
+	internal class SelectionList : IList<object>
+	{
+		private readonly SelectableItemsView _selectableItemsView;
+		private List<object> _internal;
+		static readonly IList<object> s_empty = new List<object>(0);
+
+		public SelectionList(SelectableItemsView selectableItemsView)
+		{
+			_selectableItemsView = selectableItemsView ?? throw new ArgumentNullException(nameof(selectableItemsView));
+			_internal = new List<object>();
+		}
+
+		public object this[int index] { get => _internal[index]; set => _internal[index] = value; }
+
+		public int Count => _internal.Count;
+		public bool IsReadOnly => false;
+
+		public void Add(object item)
+		{
+			var oldItems = Copy();
+
+			_internal.Add(item);
+
+			_selectableItemsView.SelectedItemsPropertyChanged(oldItems, Copy());
+		}
+
+		public void Clear()
+		{
+			var oldItems = Copy();
+
+			_internal.Clear();
+
+			_selectableItemsView.SelectedItemsPropertyChanged(oldItems, s_empty);
+		}
+
+		public bool Contains(object item)
+		{
+			return _internal.Contains(item);
+		}
+
+		public void CopyTo(object[] array, int arrayIndex)
+		{
+			_internal.CopyTo(array, arrayIndex);
+		}
+
+		public IEnumerator<object> GetEnumerator()
+		{
+			return _internal.GetEnumerator();
+		}
+
+		public int IndexOf(object item)
+		{
+			return _internal.IndexOf(item);
+		}
+
+		public void Insert(int index, object item)
+		{
+			var oldItems = Copy();
+
+			_internal.Insert(index, item);
+
+			_selectableItemsView.SelectedItemsPropertyChanged(oldItems, Copy());
+		}
+
+		public bool Remove(object item)
+		{
+			var oldItems = Copy();
+
+			var removed = _internal.Remove(item);
+
+			if (removed)
+			{
+				_selectableItemsView.SelectedItemsPropertyChanged(oldItems, Copy());
+			}
+
+			return removed;
+		}
+
+		public void RemoveAt(int index)
+		{
+			var oldItems = Copy();
+
+			_internal.RemoveAt(index);
+
+			_selectableItemsView.SelectedItemsPropertyChanged(oldItems, Copy());
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return _internal.GetEnumerator();
+		}
+
+		List<object> Copy()
+		{
+			var items = new List<object>();
+			for (int n = 0; n < _internal.Count; n++)
+			{
+				items.Add(_internal[n]);
+			}
+
+			return items;
+		}
+	}
+
 	public class SelectableItemsView : ItemsView
 	{
 		public static readonly BindableProperty SelectionModeProperty =
@@ -14,9 +119,10 @@ namespace Xamarin.Forms
 			BindableProperty.Create(nameof(SelectedItem), typeof(object), typeof(SelectableItemsView), default(object),
 				propertyChanged: SelectedItemPropertyChanged);
 
-		public static readonly BindableProperty SelectedItemsProperty =
-			BindableProperty.Create(nameof(SelectedItems), typeof(List<object>), typeof(SelectableItemsView), new List<object>(),
-				propertyChanged: SelectedItemsPropertyChanged);
+		public static readonly BindablePropertyKey SelectedItemsPropertyKey =
+			BindableProperty.CreateReadOnly(nameof(SelectedItems), typeof(IList<object>), typeof(SelectableItemsView), null);
+
+		public static readonly BindableProperty SelectedItemsProperty = SelectedItemsPropertyKey.BindableProperty;
 
 		public static readonly BindableProperty SelectionChangedCommandProperty =
 			BindableProperty.Create(nameof(SelectionChangedCommand), typeof(ICommand), typeof(SelectableItemsView));
@@ -25,16 +131,21 @@ namespace Xamarin.Forms
 			BindableProperty.Create(nameof(SelectionChangedCommandParameter), typeof(object),
 				typeof(SelectableItemsView));
 
+		public SelectableItemsView()
+		{
+			var selectionList = new SelectionList(this);
+			SetValue(SelectedItemsPropertyKey, selectionList);
+		}
+
 		public object SelectedItem
 		{
 			get => GetValue(SelectedItemProperty);
 			set => SetValue(SelectedItemProperty, value);
 		}
 
-		public List<object> SelectedItems
+		public IList<object> SelectedItems
 		{
-			get => (List<object>)GetValue(SelectedItemsProperty);
-			set => SetValue(SelectedItemsProperty, value);
+			get => (IList<object>)GetValue(SelectedItemsProperty);
 		}
 
 		public ICommand SelectionChangedCommand
@@ -89,16 +200,10 @@ namespace Xamarin.Forms
 			SelectionPropertyChanged(selectableItemsView, args);
 		}
 
-		private static void SelectedItemsPropertyChanged(BindableObject bindable, object oldValue, object newValue)
+		internal void SelectedItemsPropertyChanged(IList<object> oldSelection, IList<object> newSelection)
 		{
-			var selectableItemsView = (SelectableItemsView)bindable;
-
-			var oldList = (List<object>)oldValue;
-			var newList = (List<object>)newValue;
-
-			var args = new SelectionChangedEventArgs(oldList, newList);
-
-			SelectionPropertyChanged(selectableItemsView, args);
+			SelectionPropertyChanged(this, new SelectionChangedEventArgs(oldSelection, newSelection));
+			OnPropertyChanged(SelectedItemsProperty.PropertyName);
 		}
 	}
 }

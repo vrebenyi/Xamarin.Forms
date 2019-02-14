@@ -28,19 +28,10 @@ namespace Xamarin.Forms.Platform.Android
 			// Watch for clicks so the user can select the item held by this ViewHolder
 			selectable.Clicked += SelectableOnClicked;
 
-			var selectedItem = SelectableItemsView.SelectedItem;
-			if (selectedItem == null)
-			{
-				return;
-			}
-
-			// If there's a selected item, check to see if it's this one so we can mark it 'selected'
-			if (GetPositionForItem(selectedItem) == position)
-			{
-				selectable.IsSelected = true;
-			}
+			// Make sure that if this item is one of the selected items, it's marked as selected
+			selectable.IsSelected = PostionIsSelected(position);
 		}
-	
+
 		public override void OnViewRecycled(Object holder)
 		{
 			if (holder is SelectableViewHolder selectable)
@@ -50,6 +41,52 @@ namespace Xamarin.Forms.Platform.Android
 			}
 
 			base.OnViewRecycled(holder);
+		}
+
+		int[] GetSelectedPositions()
+		{
+			switch (SelectableItemsView.SelectionMode)
+			{
+				case SelectionMode.None:
+					return new int[0];
+
+				case SelectionMode.Single:
+					var selectedItem = SelectableItemsView.SelectedItem;
+					if (selectedItem == null)
+					{
+						return new int[0];
+					}
+
+					return new int[1] { GetPositionForItem(selectedItem) };
+
+				case SelectionMode.Multiple:
+
+					var selectedItems = SelectableItemsView.SelectedItems;
+
+					var result = new int[selectedItems.Count];
+
+					for (int n = 0; n < result.Length; n++)
+					{
+						result[n] = GetPositionForItem(selectedItems[n]);
+					}
+
+					return result;
+			}
+
+			return new int[0];
+		}
+
+		bool PostionIsSelected(int position)
+		{
+			foreach (var selectedPosition in GetSelectedPositions())
+			{
+				if (selectedPosition == position)
+				{
+					return true;
+				}
+			}
+
+			return false;
 		}
 
 		void SelectableOnClicked(object sender, int adapterPosition)
@@ -71,25 +108,20 @@ namespace Xamarin.Forms.Platform.Android
 					return;
 				case SelectionMode.Multiple:
 
-					var currentSelection = new List<object>();
-
-					foreach(var selectedItem in SelectableItemsView.SelectedItems)
-					{
-						currentSelection.Add(selectedItem);
-					}
-
 					var item = ItemsSource[adapterPosition];
 
-					if(currentSelection.Contains(item))
+					if(SelectableItemsView.SelectedItems.Contains(item))
 					{
-						currentSelection.Remove(item);
+						SelectableItemsView.SelectedItems.Remove(item);
 					}
 					else
 					{
-						currentSelection.Add(item);
+						SelectableItemsView.SelectedItems.Add(item);
 					}
 
-					SelectableItemsView.SelectedItems = currentSelection;
+					// TODO ezhart if the selectionlist thing works, clean this up so it doesn't do getvalue so much
+
+					//SelectableItemsView.SelectedItems = currentSelection;
 					
 					return;
 
