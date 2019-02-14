@@ -3,12 +3,9 @@
 
 #if __ANDROID__
 using Android.Content.Res;
-<<<<<<< HEAD
 using Android.Graphics;
 using AProgressBar = Android.Widget.ProgressBar;
 using ASeekBar = Android.Widget.AbsSeekBar;
-=======
->>>>>>> visual_editor
 using PlatformColor = Android.Graphics.Color;
 #else
 using MaterialComponents;
