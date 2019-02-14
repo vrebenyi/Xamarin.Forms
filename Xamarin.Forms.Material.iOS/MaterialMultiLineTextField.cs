@@ -2,23 +2,21 @@
 using CoreGraphics;
 using MaterialComponents;
 using UIKit;
-using MTextField = MaterialComponents.TextField;
+using MMultilineTextField = MaterialComponents.MultilineTextField;
 using MTextInputControllerFilled = MaterialComponents.TextInputControllerFilled;
 using MTextInputControllerBase = MaterialComponents.TextInputControllerBase;
-using System.Collections.Generic;
-using ObjCRuntime;
-using Foundation;
 using Xamarin.Forms.Internals;
 
 namespace Xamarin.Forms.Platform.iOS.Material
 {
-	public class MaterialTextField : MTextField
+	public class MaterialMultilineTextField : MMultilineTextField, IFormsUITextView
 	{
 		SemanticColorScheme _colorScheme;
 		TypographyScheme _typographyScheme;
 		MTextInputControllerBase _activeTextinputController;
+		public event EventHandler FrameChanged;
 
-		public MaterialTextField(IMaterialEntryRenderer element, IFontElement fontElement)
+		public MaterialMultilineTextField(IMaterialEntryRenderer element, IFontElement fontElement)
 		{
 			VisualElement.VerifyVisualFlagEnabled();
 			ClearButtonMode = UITextFieldViewMode.Never;
@@ -27,7 +25,7 @@ namespace Xamarin.Forms.Platform.iOS.Material
 			_typographyScheme = CreateTypographyScheme();
 			_colorScheme = (SemanticColorScheme)CreateColorScheme();
 			ApplyTypographyScheme(fontElement);
-			ApplyTheme(element);
+			ApplyTheme(element);			
 		}
 
 		public override CGSize SizeThatFits(CGSize size)
@@ -100,35 +98,15 @@ namespace Xamarin.Forms.Platform.iOS.Material
 		{
 			return new TypographyScheme();
 		}
-	}
 
-
-	internal class NoCaretMaterialTextField : MaterialTextField
-	{
-		public NoCaretMaterialTextField(IMaterialEntryRenderer element, IFontElement fontElement) : base(element, fontElement)
+		public override CGRect Frame
 		{
-			SpellCheckingType = UITextSpellCheckingType.No;
-			AutocorrectionType = UITextAutocorrectionType.No;
-			AutocapitalizationType = UITextAutocapitalizationType.None;
+			get => base.Frame;
+			set
+			{
+				base.Frame = value;
+				FrameChanged?.Invoke(this, EventArgs.Empty);
+			}
 		}
-
-		public override CGRect GetCaretRectForPosition(UITextPosition position)
-		{
-			return new CGRect();
-		}
-	}
-
-	internal class ReadOnlyMaterialTextField : NoCaretMaterialTextField
-	{
-		readonly HashSet<string> enableActions;
-
-		public ReadOnlyMaterialTextField(IMaterialEntryRenderer element, IFontElement fontElement) : base(element, fontElement)
-		{
-			string[] actions = { "copy:", "select:", "selectAll:" };
-			enableActions = new HashSet<string>(actions);
-		}
-
-		public override bool CanPerform(Selector action, NSObject withSender)
-			=> enableActions.Contains(action.Name);
 	}
 }

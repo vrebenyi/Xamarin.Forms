@@ -1,26 +1,25 @@
-﻿﻿using CoreGraphics;
+﻿using CoreGraphics;
 using UIKit;
+using MaterialComponents;
 
 namespace Xamarin.Forms.Platform.iOS.Material
 {
-	public class MaterialEntryRenderer : EntryRendererBase<MaterialTextField>, IMaterialEntryRenderer
+	public class MaterialEditorRenderer : EditorRendererBase<MaterialMultilineTextField>, IMaterialEntryRenderer
 	{
-
-		public MaterialEntryRenderer()
+		public MaterialEditorRenderer()
 		{
 			VisualElement.VerifyVisualFlagEnabled();
 			ClipsToBounds = true;
 		}
 
-		protected override MaterialTextField CreateNativeControl()
-		{
-			var field = new MaterialTextField(this, Element);
-			return field;
+		protected override MaterialMultilineTextField CreateNativeControl()
+		{			
+			return new MaterialMultilineTextField(this, Element);
 		}
 
 		protected override void SetBackgroundColor(Color color)
 		{
-			ApplyTheme();
+			ApplyTheme();			
 		}
 
 		protected internal override void UpdateFont()
@@ -30,7 +29,7 @@ namespace Xamarin.Forms.Platform.iOS.Material
 		}
 
 
-		protected internal override void UpdateColor()
+		protected internal override void UpdateTextColor()
 		{
 			Control?.UpdateTextColor(this);
 		}
@@ -41,7 +40,11 @@ namespace Xamarin.Forms.Platform.iOS.Material
 			Control?.ApplyTheme(this);
 		}
 
-		protected internal override void UpdatePlaceholder()
+		protected internal override void UpdatePlaceholderText()
+		{
+			Control?.UpdatePlaceholder(this);
+		}
+		protected internal override void UpdatePlaceholderColor()
 		{
 			Control?.UpdatePlaceholder(this);
 		}
@@ -50,5 +53,8 @@ namespace Xamarin.Forms.Platform.iOS.Material
 		Color IMaterialEntryRenderer.PlaceholderColor => Element?.PlaceholderColor ?? Color.Default;
 		Color IMaterialEntryRenderer.BackgroundColor => Element?.BackgroundColor ?? Color.Default;
 		string IMaterialEntryRenderer.Placeholder => Element?.Placeholder ?? string.Empty;
+
+		protected IntrinsicHeightTextView IntrinsicHeightTextView => (IntrinsicHeightTextView)TextView;
+		protected override UITextView TextView => Control.TextView;
 	}
 }
