@@ -1,6 +1,7 @@
 using System;
 using Android.Content.Res;
 using Android.Widget;
+using AColor = Android.Graphics.Color;
 
 namespace Xamarin.Forms.Platform.Android
 {
@@ -23,10 +24,10 @@ namespace Xamarin.Forms.Platform.Android
 		}
 
 		public void UpdateTextColor(TextView control, Color color, Action<ColorStateList> setColor = null)
-		{
+		{			
 			if (color == _currentTextColor)
 				return;
-
+			
 			if (setColor == null)
 			{
 				setColor = control.SetTextColor;

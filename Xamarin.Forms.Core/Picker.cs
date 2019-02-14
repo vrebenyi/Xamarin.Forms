@@ -11,15 +11,13 @@ using Xamarin.Forms.Platform;
 namespace Xamarin.Forms
 {
 	[RenderWith(typeof(_PickerRenderer))]
-	public class Picker : View, IFontElement, ITextElement, IElementConfiguration<Picker>
+	public class Picker : View, IFontElement, ITextElement, IElementConfiguration<Picker>, IPickerElement
 	{
 		public static readonly BindableProperty TextColorProperty = TextElement.TextColorProperty;
 
-		public static readonly BindableProperty TitleProperty =
-			BindableProperty.Create(nameof(Title), typeof(string), typeof(Picker), default(string));
+		public static readonly BindableProperty TitleProperty = PickerElement.TitleProperty;
 
-		public static readonly BindableProperty TitleColorProperty =
-			BindableProperty.Create(nameof(TitleColor), typeof(Color), typeof(Picker), default(Color));
+		public static readonly BindableProperty TitleColorProperty = PickerElement.TitleColorProperty;
 
 		public static readonly BindableProperty SelectedIndexProperty =
 			BindableProperty.Create(nameof(SelectedIndex), typeof(int), typeof(Picker), -1, BindingMode.TwoWay,

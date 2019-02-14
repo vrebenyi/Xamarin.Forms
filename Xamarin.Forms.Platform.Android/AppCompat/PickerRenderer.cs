@@ -33,7 +33,7 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 
 		protected override EditText CreateNativeControl()
 		{
-			return new PickerEditText(Context, this);
+			return new PickerEditText(Context);
 		}
 
 		protected override void Dispose(bool disposing)
